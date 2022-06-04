@@ -1,5 +1,5 @@
 # HOW TO USE
-1. COPY the files in the directory which includes text path files.
+1. COPY the files to the directory which includes text path files.
 	* make_initial_text.py
 	* make_sitl_gps_launch.py
 	* make_sitl_vision_launch.py
