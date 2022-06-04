@@ -1,0 +1,63 @@
+<!-- initial pose-->
+<setup>
+	<robot>
+		<name>uav0</name>
+		<pose>
+			<x>2.000000</x>
+			<y>0.800000</y>
+			<z>0.000000</z>
+			<R>0</R>
+			<P>0</P>
+			<Y>1.570796</Y>
+		</pose>
+	</robot>
+
+	<robot>
+		<name>uav1</name>
+		<pose>
+			<x>0.858732</x>
+			<y>1.629180</y>
+			<z>0.000000</z>
+			<R>0</R>
+			<P>0</P>
+			<Y>0.314159</Y>
+		</pose>
+	</robot>
+
+	<robot>
+		<name>uav2</name>
+		<pose>
+			<x>1.294658</x>
+			<y>2.970820</y>
+			<z>0.000000</z>
+			<R>0</R>
+			<P>0</P>
+			<Y>-0.942478</Y>
+		</pose>
+	</robot>
+
+	<robot>
+		<name>uav3</name>
+		<pose>
+			<x>2.705342</x>
+			<y>2.970820</y>
+			<z>0.000000</z>
+			<R>0</R>
+			<P>0</P>
+			<Y>-2.199115</Y>
+		</pose>
+	</robot>
+
+	<robot>
+		<name>uav4</name>
+		<pose>
+			<x>3.141268</x>
+			<y>1.629180</y>
+			<z>0.000000</z>
+			<R>0</R>
+			<P>0</P>
+			<Y>2.827433</Y>
+		</pose>
+	</robot>
+
+</setup>
