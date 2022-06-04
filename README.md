@@ -45,7 +45,7 @@ roslauch path_generator test_gps_sitl.launch file_dir:="$(rospack find path_gene
 ```
 ## Trouble shooting
 * Import error while using the command ```rosrun``` or ```roslaunch```
-	Build this package with ```catkin build``` command
-	USE ```chmod +x import_error_solver.sh && ./import_error_solver.sh```)
+  * Build this package with ```catkin build``` command
+  * USE ```chmod +x import_error_solver.sh && ./import_error_solver.sh```)
 	
   
