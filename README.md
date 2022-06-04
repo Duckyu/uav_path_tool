@@ -8,7 +8,7 @@
 * SITL launch file can generate two type of airframe
   * Oridunary iris
   * External pose estimation source based iris
-* [Convertion code](scripts/gt_parse_vision.py) for groundtruth from GAZEBO simulator and optitrack motion tracker(not tested yet) to mavros vision topic(mavros/vision_pose/pose)
+* [Convertion code](scripts/gt_parse_vision.py) for groundtruth from GAZEBO simulator and optitrack motion tracker (not tested yet) to mavros vision topic (mavros/vision_pose/pose)
 * [Spiral path generator](scripts/spiral_path_gen.py) included
 
 ## Prerquisition
@@ -17,7 +17,7 @@
 * GAZEBO
 * MAVROS Package
 * PX4 firmware setup with ROS package registration
-* custom airframe has to be located in the proper directory($HOME/.ros/etc/init.d-posix/airframes)
+* [Custom airframe](PX4_custom_airframe/10032_gtUAV) has to be located in the proper directory($HOME/.ros/etc/init.d-posix/airframes)
   * After the file located in the proper directory, you need to make PX4 firmware again. Please refer to this [web](https://docs.px4.io/master/en/dev_airframes/adding_a_new_frame.html).
 
 ## Path text file rule([example file](path/indoor/path1/uav0.txt))
@@ -53,7 +53,7 @@
   ```bash
   roslauch path_generator test_vision_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
   ```
-  Due to the difference between GPS based flight and external pose estimation source based flight, I've made two simulation.
+  Due to the difference between GPS based flight and external pose estimation source based flight, I've made two types of simulation.
   
 ## Caution
   For vision based multi sitl, it won't work due to large amount of computation on simulator.
