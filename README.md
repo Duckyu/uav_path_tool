@@ -4,11 +4,11 @@
 * Pure pursuit & LoS path follower implemented
 * Multi uav SITL launch file auto-generation shell script based on the path text file (look at this [file](path/sitl_launch_generator/README.md))
   * GPS based
-  * Vision based
+  * External pose estimation based
 * SITL launch file can generate two type of airframe
   * Oridunary iris
-  * external odometry source based iris
-* Convertion code for groundtruth from GAZEBO simulator and optitrack motion tracker(not tested yet) to mavros vision topic
+  * External pose estimation source based iris
+* [Convertion code](scripts/gt_parse_vision.py) for groundtruth from GAZEBO simulator and optitrack motion tracker(not tested yet) to mavros vision topic(mavros/vision_pose/pose)
 * [Spiral path generator](scripts/spiral_path_gen.py) included
 
 ## Prerquisition
