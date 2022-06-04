@@ -9,7 +9,7 @@
   * Oridunary iris
   * external odometry source based iris
 * Convertion code for groundtruth from GAZEBO simulator and optitrack motion tracker(not tested yet) to mavros vision topic
-* Spiral path generator included
+* [Spiral path generator](scripts/spiral_path_gen.py) included
 
 ## Prerquisition
 * ROS
@@ -36,3 +36,16 @@
   ```
   0.300000	0.300000	0.000000	0.000000
   ```
+## Example
+```
+roslauch path_generator path1_test_sitl_gps.launch
+```
+```
+roslauch path_generator test_gps_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
+```
+## Trouble shooting
+* Import error while using the command ```rosrun``` or ```roslaunch```
+	Build this package with ```catkin build``` command
+	USE ```chmod +x import_error_solver.sh && ./import_error_solver.sh```)
+	
+  
