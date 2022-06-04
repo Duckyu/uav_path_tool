@@ -12,6 +12,7 @@
 * [Spiral path generator](scripts/spiral_path_gen.py) included
 
 ## Prerquisition
+* Python3
 * ROS
 * GAZEBO
 * MAVROS Package
