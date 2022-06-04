@@ -36,13 +36,29 @@
   ```
   0.300000	0.300000	0.000000	0.000000
   ```
+
 ## Example
-```
-roslauch path_generator path1_test_sitl_gps.launch
-```
-```
-roslauch path_generator test_gps_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
-```
+* Simple example
+  ```console
+  roslauch path_generator path1_test_sitl_gps.launch
+  ```
+  ```console
+  roslauch path_generator test_gps_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
+  ```
+* External pose estimation source usage(in this example, GT pose data from gazebo has been used for the external pose estimation)
+  ```console
+  roslauch path_generator path1_test_sitl_vision.launch
+  ```
+  ```console
+  roslauch path_generator test_vision_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
+  ```
+  Due to the difference between GPS based flight and external pose estimation source based flight, I've made two simulation.
+  
+## Caution
+  For vision based multi sitl, it won't work due to large amount of computation on simulator.
+ 
+  Therefore, you need to use only one vision based controller per simulation task.
+
 ## Trouble shooting
 * Import error while using the command ```rosrun``` or ```roslaunch```
   * Build this package with ```catkin build``` command
