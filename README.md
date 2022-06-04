@@ -39,17 +39,17 @@
 
 ## Example
 * Simple example
-  ```console
-  roslauch path_generator path1_test_sitl_gps.launch
+  ```bash
+  roslauch path_generator in_path1_test_sitl_gps.launch
   ```
-  ```console
+  ```bash
   roslauch path_generator test_gps_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
   ```
 * External pose estimation source usage(in this example, GT pose data from gazebo has been used for the external pose estimation)
-  ```console
-  roslauch path_generator path1_test_sitl_vision.launch
+  ```bash
+  roslauch path_generator in_path1_test_sitl_vision.launch
   ```
-  ```console
+  ```bash
   roslauch path_generator test_vision_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
   ```
   Due to the difference between GPS based flight and external pose estimation source based flight, I've made two simulation.
