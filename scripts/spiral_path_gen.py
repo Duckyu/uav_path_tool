@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import numpy as np
 
-round_trip = True
-center_point = [2.0, 2.0]
+round_trip = False
+center_point = [3.0, 2.0]
 height = [1.0, 2.0]
-radius = 1.2
-start_step = 160.0
+radius = 1.8
+start_step = 100.0
 resolution = 200
 
 print("control\t0")
