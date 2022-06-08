@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import rospy
 import sys
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     robot_name = rospy.get_param("robot_name")
 
     pl = pathLoader(file_dir, robot_name)
-    pl.print()
+    print(pl)
     path = pl.load()
     pl.generate_path_msg(path)
     

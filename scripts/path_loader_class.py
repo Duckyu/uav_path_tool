@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
+import os
 import rospy
 import tf2_ros
 import sys
@@ -19,6 +20,8 @@ class pathLoader:
     path_msg = Path()
     ctrl_type = 0
     rot_type = 0
+
+    ros_version = os.environ.get('ROS_DISTRO')
     
     #publisher
     br       = tf2_ros.StaticTransformBroadcaster()
@@ -28,9 +31,12 @@ class pathLoader:
         self.file_path = _file_dir + "/" + _robot_name + ".txt"
         self.robot_name = _robot_name
 
-    def print(self):
-        rospy.loginfo("Path is generated for {0}".format(self.robot_name))
-        rospy.loginfo("Path text file located in: {0}".format(self.file_path))
+    def __str__(self):
+        return "Path is generated for {0}\nPath text file located in: {1}".format(self.robot_name, self.file_path)
+
+#    def print(self):
+#        rospy.loginfo("Path is generated for {0}".format(self.robot_name))
+#        rospy.loginfo("Path text file located in: {0}".format(self.file_path))
     
     def load(self):
         path = []
@@ -73,13 +79,19 @@ class pathLoader:
         pose_T = self.list_to_transformation(_pose)
         start_T = self.list_to_transformation(_start_pose)
         local_pose_T = np.matmul(np.linalg.inv(start_T), pose_T)
-        local_pose = [local_pose_T[0,3], local_pose_T[1,3], local_pose_T[2,3], Rot.from_matrix(local_pose_T[:3,:3]).as_euler('zxy')[0]]
+        if self.ros_version == 'melodic':
+            local_pose = [local_pose_T[0,3], local_pose_T[1,3], local_pose_T[2,3], Rot.from_dcm(local_pose_T[:3,:3]).as_euler('zxy')[0]]
+        elif self.ros_version == 'noetic':
+            local_pose = [local_pose_T[0,3], local_pose_T[1,3], local_pose_T[2,3], Rot.from_matrix(local_pose_T[:3,:3]).as_euler('zxy')[0]]
 
         return local_pose
 
     def list_to_transformation(self, _pose_list):
         T = np.identity(n=4, dtype=np.float64)
-        R = Rot.from_euler('z', _pose_list[3]).as_matrix()
+        if self.ros_version == 'melodic':
+            R = Rot.from_euler('z', _pose_list[3]).as_dcm()
+        elif self.ros_version == 'noetic':
+            R = Rot.from_euler('z', _pose_list[3]).as_matrix()
         t = np.array(_pose_list[:3])
         T[:3,:3] = R
         T[:3,3] = t.T
