@@ -4,11 +4,11 @@
     <arg name="yaw_rate" default="0.3"/>
     <arg name="arv_dist" default="0.1"/>
     <arg name="LoS_radius" default="0.15"/>
-    <arg name="robot_name" default="uav0"/>
     <arg name="file_dir" default="$(find path_generator)/path/indoor/path1"/>
+    <arg name="robot_name" default="uav1"/>
     
     <param name="file_dir" value="$(arg file_dir)"/>
-    
+
     <!-- UAV -->
     <group ns="$(arg robot_name)">
         <param name="robot_name" value="$(arg robot_name)"/>
@@ -17,6 +17,6 @@
         <param name="arv_dist" value="$(arg arv_dist)"/>
         <param name="LoS_radius" value="$(arg LoS_radius)"/>
         <!-- control node -->
-        <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="control" output="screen"/>
+        <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="$(arg robot_name)_control" output="screen"/>
     </group>
 </launch>
