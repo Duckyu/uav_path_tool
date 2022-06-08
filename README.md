@@ -68,7 +68,17 @@
 
 * If you are not available to make drone fly, please check the PX4 firmware. Stable version of the firmware can be installed by the below command.(Stable version has been tested by [EungChang-Mason-Lee](https://github.com/engcang/mavros-gazebo-application#installation))
   ```console
-    $ cd PX4-Autopilot
-    $ git reset --hard 96c7fe4978bab2af970a097f4898e024c2d33440
-    $ git submodule update --init --recursive
+  $ cd PX4-Autopilot
+  $ git reset --hard 96c7fe4978bab2af970a097f4898e024c2d33440
+  $ git submodule update --init --recursive
+  ```
+  
+* If error "/usr/bin/env: ‘python’: No such file or directory" occurs, youhave to link the command python.
+  * If you are using UBUNTU 18.04,
+  ```bash
+  ln -s /usr/bin/python2 /usr/bin/python
+  ```
+  * If you are using UBUNTU 20.04,
+  ```bash
+  ln -s /usr/bin/python3 /usr/bin/python
   ```
