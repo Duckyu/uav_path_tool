@@ -36,6 +36,7 @@ class flightControl:
     vel = 2.0
     yaw_rate = 0.1570796
     arrival_dist = 0.05
+    arrival_yaw = 0.2
     r_los = 1.0
     start_pose = [0, 0, 0, 0]
     path = []
@@ -48,7 +49,7 @@ class flightControl:
     state = State()
     ext_state = ExtendedState()
 
-    def __init__(self, _robot_name, _start_pose, _vel, _arrival_dist, _path, _ctrl_type = 1, _rot_type = 0, _r_los = 1.0, _yaw_rate = 0.1570796):#
+    def __init__(self, _robot_name, _start_pose, _vel, _arrival_dist, _arrival_yaw, _path, _ctrl_type = 1, _rot_type = 0, _r_los = 1.0, _yaw_rate = 0.1570796):#
         self.vel = _vel
         self.yaw_rate = _yaw_rate
         self.path = _path
@@ -57,6 +58,7 @@ class flightControl:
         self.past_target = _start_pose
         self.robot_name = _robot_name
         self.arrival_dist = _arrival_dist
+        self.arrival_yaw = _arrival_yaw
         self.r_los  = _r_los
         self.ctrl_type = _ctrl_type
         self.rot_type = _rot_type
@@ -82,13 +84,13 @@ class flightControl:
         trans = [data.pose.position.x, data.pose.position.y, data.pose.position.z]
         self.pose = trans + [yaw]
 
-        diff,_,_,_ = self.distance_to_target(self.pose, self.target)
+        diff,_,_,_,yaw_diff = self.distance_to_target(self.pose, self.target)
         
         if self.ctrl_type == 0:
             threshold = self.arrival_dist
         elif self.ctrl_type == 1:
             threshold = self.r_los
-        if diff < threshold:
+        if diff < threshold and abs(yaw_diff) < self.arrival_yaw:
             if self.target_idx < len(self.path)-1:
                 self.target_idx = self.target_idx + 1
                 if self.rot_type == 0:
@@ -98,11 +100,13 @@ class flightControl:
                 rospy.loginfo("Going to waypoint {0}/{1}".format(self.target_idx,len(self.path)))
             else:
                 self.mode = 0
-                rospy.loginfo_once("{0} Path end".format(self.robot_name))
-            
+                rospy.loginfo_once("{0} Path end".format(self.robot_name))            
             self.past_target = self.target
             self.target = self.path[self.target_idx]
             # rospy.loginfo("{0} past/target: {1}/{2}".format(self.robot_name, self.past_target,self.target))
+        elif diff < threshold and abs(yaw_diff) > self.arrival_yaw:
+            self.mode = 2
+            rospy.loginfo_once("Yaw aligning")
 
     def move(self, _target, _mode):
         control_msg = PositionTarget()
@@ -124,12 +128,12 @@ class flightControl:
             control_msg.velocity.y = vel_cmd[1]
             control_msg.velocity.z = vel_cmd[2]
             control_msg.yaw = _target[3]
-        elif _mode == 2: # yaw_rate correction needed
+        elif _mode == 2:
             control_msg.type_mask = self.pos_vel_mask
             control_msg.position.x = _target[0]
             control_msg.position.y = _target[1]
             control_msg.position.z = _target[2]
-            control_msg.yaw_rate = 0
+            control_msg.yaw_rate = self.trap_yaw(self.yaw_rate)
         elif _mode == 3:
             control_msg.type_mask = self.vel_vel_mask
             if self.ctrl_type == 0:
@@ -151,13 +155,13 @@ class flightControl:
         self.control_pub.publish(control_msg)
 
     def pursuit_vel(self, _pose, _target):
-        (_, grad_x, grad_y, grad_z) = self.distance_to_target(_pose, _target)
+        (_, grad_x, grad_y, grad_z, _) = self.distance_to_target(_pose, _target)
         velocity_command = [self.vel*grad_x, self.vel*grad_y, self.vel*grad_z] # , self.yaw_rate
         return velocity_command
     
     def los_vel(self, _pose, _past_target, _target, _r_los = 1.0):
-        (_, vec_x, vec_y, vec_z) = self.distance_to_target(_past_target, _target)
-        (pp_d, pp_x, pp_y, pp_z) = self.distance_to_target(_past_target, _pose)
+        (_, vec_x, vec_y, vec_z, _) = self.distance_to_target(_past_target, _target)
+        (pp_d, pp_x, pp_y, pp_z, _) = self.distance_to_target(_past_target, _pose)
         perp_d = pp_d * np.sin(np.arccos(np.dot(np.array([vec_x, vec_y, vec_z]), np.array([pp_x, pp_y, pp_z]))))
         local_dist = (float(pp_d)**2 - float(perp_d)**2)**0.5
         perp = [[_past_target[0], _past_target[1], _past_target[2]][i] + [vec_x*local_dist, vec_y*local_dist, vec_z*local_dist][i] for i in range(3)]
@@ -166,35 +170,38 @@ class flightControl:
             local_target = [perp[i] + [vec_x*local_los_dist, vec_y*local_los_dist, vec_z*local_los_dist][i] for i in range(3)]
         else:
             local_target = perp
-        (_, local_x, local_y, local_z) = self.distance_to_target(_pose, local_target)
+        local_target.append(self.target[3])
+        (_, local_x, local_y, local_z, _) = self.distance_to_target(_pose, local_target)
         
         # rospy.logerr_once(local_target)
         velocity_command = [self.vel*local_x, self.vel*local_y, self.vel*local_z] # , self.yaw_rate
         return velocity_command
         
     def trap_yaw(self, _yaw_rate):
-        diff_yaw = self.pose[3] - self.target[3]
-        rospy.logerr(diff_yaw)
-
-        while diff_yaw<-3.141592:
-            diff_yaw += 3.141592*2
-        while diff_yaw>3.141592:
-            diff_yaw -= 3.141592*2
+        (_, _, _, _, diff_yaw) = self.distance_to_target(self.pose, self.target)
 
         if diff_yaw > _yaw_rate*2:
-            yaw_rate_cmd = -_yaw_rate
+            # yaw_rate_cmd = -_yaw_rate
+            yaw_rate_cmd = _yaw_rate
         elif diff_yaw > _yaw_rate:
-            yaw_rate_cmd = -_yaw_rate*(diff_yaw/_yaw_rate)/2
+            # yaw_rate_cmd = -_yaw_rate*(diff_yaw/_yaw_rate)/2
+            yaw_rate_cmd = _yaw_rate*(diff_yaw/_yaw_rate)/2
         elif diff_yaw > 0:
             self.mode = 1
-            yaw_rate_cmd = -_yaw_rate/2
+            # yaw_rate_cmd = -_yaw_rate/2
+            yaw_rate_cmd = _yaw_rate/2
         elif diff_yaw > -_yaw_rate:
             self.mode = 1
-            yaw_rate_cmd = _yaw_rate/2
+            # yaw_rate_cmd = _yaw_rate/2
+            yaw_rate_cmd = -_yaw_rate/2
         elif diff_yaw > -_yaw_rate*2:
-            yaw_rate_cmd = -_yaw_rate*(diff_yaw/_yaw_rate)/2
+            # yaw_rate_cmd = -_yaw_rate*(diff_yaw/_yaw_rate)/2
+            yaw_rate_cmd = _yaw_rate*(diff_yaw/_yaw_rate)/2
         else:
-            yaw_rate_cmd = _yaw_rate
+            # yaw_rate_cmd = _yaw_rate
+            yaw_rate_cmd = -_yaw_rate
+
+        rospy.logerr("diff_yaw: {0}, yaw_rate_cmd: {1} ".format(diff_yaw, yaw_rate_cmd))
         
         return yaw_rate_cmd
 
@@ -205,7 +212,12 @@ class flightControl:
         grad_x = (_target[0] - _pose[0])/dist
         grad_y = (_target[1] - _pose[1])/dist
         grad_z = (_target[2] - _pose[2])/dist
-        return (dist, grad_x, grad_y, grad_z)
+        yaw_diff = _target[3] - _pose[3]
+        while yaw_diff < -np.pi:
+            yaw_diff += np.pi*2
+        while yaw_diff > np.pi:
+            yaw_diff -= np.pi*2
+        return (dist, grad_x, grad_y, grad_z, yaw_diff)
 
     def takeoff(self):
         rospy.loginfo("Attempting takeoff")

@@ -1,5 +1,5 @@
 control	1
-yaw_angle	0
+yaw_angle	1
 pose_x	pose_y	pose_z	heading
 0.300000	0.300000	0.000000	0.000000
 0.300000	0.300000	0.800000	0.000000

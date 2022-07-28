@@ -3,9 +3,10 @@
     <arg name="vel" default="0.25"/>
     <arg name="yaw_rate" default="0.3"/>
     <arg name="arv_dist" default="0.1"/>
+    <arg name="arv_yaw" default="0.2"/>
     <arg name="LoS_radius" default="0.15"/>
-    <arg name="robot_name" default="uav0"/>
-    <arg name="file_dir" default="$(find path_generator)/path/indoor/path1"/>
+    <arg name="robot_name" default="uav4"/>
+    <arg name="file_dir" default="$(find path_generator)/path/indoor/path4"/>
     
     <param name="sitl_flag" value="True"/>
     <param name="file_dir" value="$(arg file_dir)"/>
@@ -16,6 +17,7 @@
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>
+        <param name="arv_yaw" value="$(arg arv_yaw)"/>
         <param name="LoS_radius" value="$(arg LoS_radius)"/>
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="control" output="screen"/>
         <node pkg="path_generator" type="gt_parse_vision.py" name="gt" output="screen"/>
