@@ -10,6 +10,7 @@
   * External pose estimation source based iris
 * [Convertion code](scripts/gt_parse_vision.py) for groundtruth from GAZEBO simulator and optitrack motion tracker (not tested yet) to mavros vision topic (mavros/vision_pose/pose)
 * [Spiral path generator](scripts/spiral_path_gen.py) included
+* Finite State Machine based controller adopted.
 
 ## Prerquisition
 * Python3
