@@ -12,8 +12,8 @@
     <param name="file_dir" value="$(arg file_dir)"/>
 
     <!-- UAV -->
-    <include file="$(find mavros)/launch/px4.launch" ns="$(arg robot_name)"/>
-    <include file="$(find vrpn_client_ros)/launch/sample.launch" ns="$(arg robot_name)"/>
+    <!--include file="$(find mavros)/launch/px4.launch" ns="$(arg robot_name)"/-->
+    <!--include file="$(find vrpn_client_ros)/launch/dataset_optitrack.launch" ns="$(arg robot_name)"/-->
 
     <group ns="$(arg robot_name)">
         <param name="robot_name" value="$(arg robot_name)"/>

@@ -41,7 +41,7 @@
 ## Example
 * Simple example
   ```bash
-  roslaunch path_generator in_path1_test_sitl_gps.launch
+  roslaunch path_generator in_path1_gps_sitl.launch
   ```
   ```bash
   roslaunch path_generator test_gps_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
@@ -49,7 +49,7 @@
 
 * External pose estimation source usage(in this example, GT pose data from gazebo has been used for the external pose estimation)
   ```bash
-  roslauch path_generator in_path1_test_sitl_vision.launch
+  roslauch path_generator in_path1_vision_sitl.launch
   ```
   ```bash
   roslaunch path_generator test_vision_sitl.launch file_dir:="$(rospack find path_generator)/path/indoor/path1"
