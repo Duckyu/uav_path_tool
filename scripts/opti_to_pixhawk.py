@@ -28,7 +28,7 @@ class gtpub():
     def __init__(self):
         rospy.init_node('gtgt', anonymous=True)
         self.model_name = rospy.get_param("model_name", 'model')
-        self.my_pose = rospy.Subscriber('vrpn_client/'+self.model_name+'/pose', PoseStamped, self.opti_cb)
+        self.my_pose = rospy.Subscriber('vrpn_client_node/'+self.model_name+'/pose', PoseStamped, self.opti_cb)
         self.vision_pose_pub = rospy.Publisher('mavros/vision_pose/pose', PoseStamped, queue_size=1)
 
         self.rate = rospy.Rate(40)
