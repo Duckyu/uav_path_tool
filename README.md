@@ -21,7 +21,7 @@
 * [Custom airframe](PX4_custom_airframe/10032_gtUAV) has to be located in the proper directory($HOME/.ros/etc/init.d-posix/airframes)
   * After the file located in the proper directory, you need to make PX4 firmware again. Please refer to this [web](https://docs.px4.io/master/en/dev_airframes/adding_a_new_frame.html).
 
-## Path text file rule([example file](path/indoor/path1/uav0.txt))
+## Path text file rule([example file](path/indoor/path1/UAV.txt))
 * First Line: write down type of control (0: pure pursuit, 1: LoS)
   ```
   control	1

@@ -15,7 +15,7 @@ from geometry_msgs.msg import PoseStamped, TransformStamped
 
 class pathLoader:
     file_path  = "/home/duckyu/ws/duck_base/src/path_generator/path/indoor/path1"
-    robot_name  = "uav0"
+    robot_name  = "UAV0"
     start_pose = [0, 0, 0, 0]
     path_msg = Path()
     ctrl_type = 0

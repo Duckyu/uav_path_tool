@@ -10,8 +10,8 @@
     <param name="sitl_flag" value="True"/>
     <param name="file_dir" value="$(arg file_dir)"/>
     <!-- UAV0 -->
-    <group ns="uav1">
-        <param name="robot_name" value="uav1"/>
+    <group ns="UAV1">
+        <param name="robot_name" value="UAV1"/>
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>
@@ -20,8 +20,8 @@
         <!-- control node -->
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="control" output="screen"/>
     </group>
-    <group ns="uav2">
-        <param name="robot_name" value="uav2"/>
+    <group ns="UAV2">
+        <param name="robot_name" value="UAV2"/>
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>
@@ -30,8 +30,8 @@
         <!-- control node -->
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="control" output="screen"/>
     </group>
-    <group ns="uav3">
-        <param name="robot_name" value="uav3"/>
+    <group ns="UAV3">
+        <param name="robot_name" value="UAV3"/>
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>
@@ -40,8 +40,8 @@
         <!-- control node -->
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="control" output="screen"/>
     </group>
-    <group ns="uav4">
-        <param name="robot_name" value="uav4"/>
+    <group ns="UAV4">
+        <param name="robot_name" value="UAV4"/>
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>
@@ -50,8 +50,8 @@
         <!-- control node -->
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="control" output="screen"/>
     </group>
-    <group ns="uav5">
-        <param name="robot_name" value="uav5"/>
+    <group ns="UAV5">
+        <param name="robot_name" value="UAV5"/>
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>

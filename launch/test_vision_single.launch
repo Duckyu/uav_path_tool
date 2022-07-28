@@ -5,7 +5,7 @@
     <arg name="arv_dist" default="0.1"/>
     <arg name="arv_yaw" default="0.2"/>
     <arg name="LoS_radius" default="0.15"/>
-    <arg name="robot_name" default="uav4"/>
+    <arg name="robot_name" default="UAV4"/>
     <arg name="file_dir" default="$(find path_generator)/path/indoor/path4"/>
     
     <param name="sitl_flag" value="True"/>

@@ -11,7 +11,7 @@ from geometry_msgs.msg import Pose, PoseStamped, TransformStamped
 from nav_msgs.msg import Odometry
 
 class gtParsePubVision:
-    robot_name = "uav0"
+    robot_name = "UAV0"
     start_gt = Pose()
     gt = Pose()
     local_gt = PoseStamped()

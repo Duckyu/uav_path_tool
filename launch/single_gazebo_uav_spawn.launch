@@ -12,7 +12,7 @@
     <!-- vehicle model and config -->
     <arg name="est" default="ekf2"/>
     <arg name="vehicle" default="iris"/>
-    <arg name="model_name" default="uav"/>
+    <arg name="model_name" default="UAV"/>
     <arg name="sim_model" default="gtUAV"/>
     <arg name="ID" default="1"/>
     <env name="PX4_SIM_MODEL" value="$(arg sim_model)" />

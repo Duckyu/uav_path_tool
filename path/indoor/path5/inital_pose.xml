@@ -1,7 +1,7 @@
 <!-- initial pose-->
 <setup>
 	<robot>
-		<name>uav1</name>
+		<name>UAV1</name>
 		<pose>
 			<x>3.000000</x>
 			<y>0.200000</y>
@@ -13,7 +13,7 @@
 	</robot>
 
 	<robot>
-		<name>uav2</name>
+		<name>UAV2</name>
 		<pose>
 			<x>3.000000</x>
 			<y>3.800000</y>
@@ -25,7 +25,7 @@
 	</robot>
 
 	<robot>
-		<name>uav3</name>
+		<name>UAV3</name>
 		<pose>
 			<x>3.000000</x>
 			<y>1.000000</y>
@@ -37,7 +37,7 @@
 	</robot>
 
 	<robot>
-		<name>uav4</name>
+		<name>UAV4</name>
 		<pose>
 			<x>2.133975</x>
 			<y>2.500000</y>
@@ -49,7 +49,7 @@
 	</robot>
 
 	<robot>
-		<name>uav5</name>
+		<name>UAV5</name>
 		<pose>
 			<x>3.866025</x>
 			<y>2.500000</y>
