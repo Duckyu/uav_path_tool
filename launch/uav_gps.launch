@@ -20,4 +20,5 @@
         <!-- control node -->
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="$(arg robot_name)_control" output="screen"/>
     </group>
+    <include file="$(find mavros)/launch/px4.launch" ns="$(arg robot_name)"/>
 </launch>

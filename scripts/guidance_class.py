@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+from queue import Empty
 import rospy
 import numpy as np
 from scipy.spatial.transform import Rotation as Rot
 from scipy.spatial import distance
 
 from mavros_msgs.srv import CommandBool, SetMode
+from std_msgs.msg import Empty
 from nav_msgs.msg import Path, Odometry
 from mavros_msgs.msg import PositionTarget, State, ExtendedState
 from geometry_msgs.msg import PoseStamped, TransformStamped
@@ -33,6 +35,7 @@ class flightControl:
 
     robot_name = ""
 
+    start = False
     vel = 2.0
     yaw_rate = 0.1570796
     arrival_dist = 0.05
@@ -71,6 +74,7 @@ class flightControl:
         state_sub          = rospy.Subscriber("mavros/state", State, self.state_callback)
         ext_state_sub      = rospy.Subscriber("mavros/extended_state", ExtendedState, self.ext_state_callback)
         local_position_sub = rospy.Subscriber("mavros/local_position/pose", PoseStamped, self.local_position_callback)
+        start_sub = rospy.Subscriber("/start", Empty, self.start_callback)
 
     def state_callback(self, data):  
         self.state = data
@@ -107,6 +111,9 @@ class flightControl:
         elif diff < threshold and abs(yaw_diff) > self.arrival_yaw:
             self.mode = 2
             rospy.loginfo_once("Yaw aligning")
+
+    def start_callback(self, data):  
+        self.start = True
 
     def move(self, _target, _mode):
         control_msg = PositionTarget()
@@ -220,6 +227,8 @@ class flightControl:
         return (dist, grad_x, grad_y, grad_z, yaw_diff)
 
     def takeoff(self):
+        while(not self.start):
+            rospy.loginfo_once("Waiting start topic")
         rospy.loginfo("Attempting takeoff")
         while self.state.armed == False or self.pose[2] < 0.15:
             try:
