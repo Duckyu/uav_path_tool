@@ -3,7 +3,10 @@
 import rospy
 import tf2_ros
 import sys
+from packaging import version
+
 import numpy as np
+import scipy
 from scipy.spatial.transform import Rotation as Rot
 
 from gazebo_msgs.msg import ModelStates
@@ -73,17 +76,26 @@ class gtParsePubVision:
         local.pose.position.x = local_T[0,3]
         local.pose.position.y = local_T[1,3]
         local.pose.position.z = local_T[2,3]
-
-        local.pose.orientation.x = Rot.from_matrix(local_T[:3,:3]).as_quat()[0]
-        local.pose.orientation.y = Rot.from_matrix(local_T[:3,:3]).as_quat()[1]
-        local.pose.orientation.z = Rot.from_matrix(local_T[:3,:3]).as_quat()[2]
-        local.pose.orientation.w = Rot.from_matrix(local_T[:3,:3]).as_quat()[3]
+        
+        if(version.parse(scipy.__version__) > version.parse("1.4.0")):
+            local.pose.orientation.x = Rot.from_matrix(local_T[:3,:3]).as_quat()[0]
+            local.pose.orientation.y = Rot.from_matrix(local_T[:3,:3]).as_quat()[1]
+            local.pose.orientation.z = Rot.from_matrix(local_T[:3,:3]).as_quat()[2]
+            local.pose.orientation.w = Rot.from_matrix(local_T[:3,:3]).as_quat()[3]
+        else:
+            local.pose.orientation.x = Rot.from_dcm(local_T[:3,:3]).as_quat()[0]
+            local.pose.orientation.y = Rot.from_dcm(local_T[:3,:3]).as_quat()[1]
+            local.pose.orientation.z = Rot.from_dcm(local_T[:3,:3]).as_quat()[2]
+            local.pose.orientation.w = Rot.from_dcm(local_T[:3,:3]).as_quat()[3]
         
         return local
 
     def gt_to_transformation(self, _pose):
         T = np.identity(n=4, dtype=np.float64)
-        R = Rot.from_quat([_pose.orientation.x, _pose.orientation.y, _pose.orientation.z, _pose.orientation.w]).as_matrix()
+        if(version.parse(scipy.__version__) > version.parse("1.4.0")):
+            R = Rot.from_quat([_pose.orientation.x, _pose.orientation.y, _pose.orientation.z, _pose.orientation.w]).as_matrix()
+        else:
+            R = Rot.from_quat([_pose.orientation.x, _pose.orientation.y, _pose.orientation.z, _pose.orientation.w]).as_dcm()
         t = np.array([_pose.position.x, _pose.position.y, _pose.position.z])
         T[:3,:3] = R
         T[:3,3] = t.T
