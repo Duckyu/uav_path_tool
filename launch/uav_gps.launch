@@ -18,6 +18,7 @@
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>
+        <param name="arv_yaw" value="$(arg arv_yaw)"/>
         <param name="LoS_radius" value="$(arg LoS_radius)"/>
         <!-- control node -->
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="$(arg robot_name)_control" output="screen"/>

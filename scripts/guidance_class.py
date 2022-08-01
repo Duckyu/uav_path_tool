@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from queue import Empty
 import rospy
 import numpy as np
 from scipy.spatial.transform import Rotation as Rot

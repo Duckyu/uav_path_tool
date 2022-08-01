@@ -12,19 +12,18 @@
     <param name="file_dir" value="$(arg file_dir)"/>
 
     <!-- UAV -->
-    <!--include file="$(find mavros)/launch/px4.launch" ns="$(arg robot_name)"/-->
-    <!--include file="$(find vrpn_client_ros)/launch/dataset_optitrack.launch" ns="$(arg robot_name)"/-->
 
     <group ns="$(arg robot_name)">
         <param name="robot_name" value="$(arg robot_name)"/>
         <param name="vel" value="$(arg vel)"/>
         <param name="yaw_rate" value="$(arg yaw_rate)"/>
         <param name="arv_dist" value="$(arg arv_dist)"/>
+        <param name="arv_yaw" value="$(arg arv_yaw)"/>
         <param name="LoS_radius" value="$(arg LoS_radius)"/>
         <param name="model_name" value="CJH_UAV_1"/>
 
         <!-- control node -->
         <node pkg="path_generator" type="velocity_pursuit_guidance.py" name="$(arg robot_name)_control" output="screen"/>
-        <node pkg="path_generator" type="opti_to_pixhawk.py" name="$(arg robot_name)_estimate" output="screen"/>
+        <node pkg="path_generator" type="gt_parse_vision.py" name="$(arg robot_name)_estimate" output="screen"/>
     </group>
 </launch>
