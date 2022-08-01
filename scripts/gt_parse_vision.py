@@ -12,6 +12,7 @@ from nav_msgs.msg import Odometry
 
 class gtParsePubVision:
     robot_name = "UAV0"
+    model_name = "CJH_UAV_0"
     start_gt = Pose()
     gt = Pose()
     local_gt = PoseStamped()
@@ -22,8 +23,9 @@ class gtParsePubVision:
     vis_pub  = rospy.Publisher("mavros/vision_pose/pose", PoseStamped, queue_size=1)
     gt_odom_pub = rospy.Publisher("odom", Odometry, queue_size=1)
     
-    def __init__(self, _robot_name, _sitl_flag):
+    def __init__(self, _robot_name, _model_name, _sitl_flag):
         self.robot_name = _robot_name
+        self.model_name = _model_name
         self.sitl_flag = _sitl_flag
         self.sub_setup()
     
@@ -31,7 +33,7 @@ class gtParsePubVision:
         if self.sitl_flag:
             gt_sub  = rospy.Subscriber("/gazebo/model_states", ModelStates, self.gz_gt_callback)
         else:
-            gt_sub  = rospy.Subscriber("/mocap_pose", PoseStamped, self.mc_gt_callback)
+            gt_sub = rospy.Subscriber('vrpn_client_node/'+self.model_name+'/pose', PoseStamped, self.mc_gt_callback)
         
         
     def gz_gt_callback(self, msg):
@@ -54,7 +56,6 @@ class gtParsePubVision:
         else:
             self.start_gt_save = True
             self.start_gt = _pose
-            # rospy.loginfo("{0} start pose saved".format(self.robot_name))
             rospy.loginfo("{0} start pose saved {1}".format(self.robot_name, self.start_gt))
 
     def gt_to_local(self, _pose, _start_gt):
@@ -78,7 +79,6 @@ class gtParsePubVision:
         local.pose.orientation.z = Rot.from_matrix(local_T[:3,:3]).as_quat()[2]
         local.pose.orientation.w = Rot.from_matrix(local_T[:3,:3]).as_quat()[3]
         
-
         return local
 
     def gt_to_transformation(self, _pose):
@@ -118,12 +118,13 @@ if __name__ == '__main__':
 
     rospy.init_node('gt_vision', anonymous=True)
     
-    rate = rospy.Rate(50)
+    rate = rospy.Rate(40)
     
     robot_name = rospy.get_param("robot_name")
-    sitl_flag = rospy.get_param("/sitl_flag")
+    model_name = rospy.get_param("model_name", 'model')
+    sitl_flag = rospy.get_param("/sitl_flag", False)
 
-    gt_vis = gtParsePubVision(robot_name, sitl_flag)
+    gt_vis = gtParsePubVision(robot_name, model_name, sitl_flag)
 
     while not rospy.is_shutdown():
         try:
