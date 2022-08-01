@@ -36,7 +36,7 @@ class gtParsePubVision:
         if self.sitl_flag:
             gt_sub  = rospy.Subscriber("/gazebo/model_states", ModelStates, self.gz_gt_callback)
         else:
-            gt_sub = rospy.Subscriber('vrpn_client_node/'+self.model_name+'/pose', PoseStamped, self.mc_gt_callback)
+            gt_sub = rospy.Subscriber('/vrpn_client_node/'+self.model_name+'/pose', PoseStamped, self.mc_gt_callback)
         
         
     def gz_gt_callback(self, msg):
