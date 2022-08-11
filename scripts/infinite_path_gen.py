@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 import numpy as np
 
-round_trip = True
-center_point = [2.2, 2.2]
-height = [1.0, 2.0]
-radius = 2.0
-start_step = 0.0
+round_trip = False
+center_point = [3.0, 2.0]
+height = [2.0, 1.0]
+radius = 1.8
+start_step = 100.0
 resolution = 200
 
 print("control\t0")
 print("yaw_angle\t1")
 print("cmd_type\t0")
 print("pose_x	pose_y	pose_z	heading")
+###########Lemniscate of Bernoulli##########
 for i in range(resolution):
     angle = 2*np.pi/float(resolution)*(i+start_step)
     while angle > np.pi:
@@ -24,7 +25,7 @@ for i in range(resolution):
         z = (height[1]-height[0])/float(resolution)*(float(resolution)-abs(float(resolution)-i*2.0))+height[0]
     else:
         z = (height[1]-height[0])/float(resolution)*i+height[0]
-    Y = -float(angle-np.pi/2.)#
+    Y = -float(angle-np.pi)#/2.
     while Y > np.pi:
         Y -= 2*np.pi
     while Y < -np.pi:

@@ -1,5 +1,6 @@
 control	1
 yaw_angle	1
+cmd_type	1
 pose_x	pose_y	pose_z	heading
 3.000000	1.000000	0.000000	-1.570796
 3.000000	1.000000	1.000000	-1.570796

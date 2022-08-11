@@ -20,6 +20,7 @@ class pathLoader:
     path_msg = Path()
     ctrl_type = 0
     rot_type = 0
+    cmd_type = 0
 
     ros_version = os.environ.get('ROS_DISTRO')
     
@@ -56,7 +57,13 @@ class pathLoader:
         rot_cfg = self.text_clear(rot_cfg, '')
         self.rot_type = float(rot_cfg[1])
 
-        data_list = data_list[3:]
+        cmd_type = data_list[2]
+        cmd_type = cmd_type.split("\t")
+        cmd_type = self.text_clear(cmd_type, '')
+        self.cmd_type = float(cmd_type[1])
+
+        data_list = data_list[4:]
+        # data_list = data_list[3:]
         for data in data_list:
             line = data.split("\t")
             line = self.text_clear(line, '')

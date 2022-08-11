@@ -28,7 +28,7 @@ if __name__ == '__main__':
     rospy.loginfo("control  type: {0}".format(pl.ctrl_type))
     rospy.loginfo("rotation type: {0}".format(pl.rot_type))
     
-    fc = flightControl(robot_name, [0,0,0,pl.start_pose[3]], vel, arv_dist, arv_yaw, path, pl.ctrl_type, pl.rot_type, r_los, yaw_rate)
+    fc = flightControl(robot_name, [0,0,0,pl.start_pose[3]], vel, arv_dist, arv_yaw, path, pl.ctrl_type, pl.rot_type,  pl.cmd_type, r_los, yaw_rate)
     
     fc.takeoff()
 

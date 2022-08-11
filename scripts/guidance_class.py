@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from time import sleep
 import rospy
 import numpy as np
 from scipy.spatial.transform import Rotation as Rot
@@ -25,6 +26,8 @@ class flightControl:
     ctrl_type = 0
     # ctrl_type : 'yaw target: 0', 'yaw vel: 1''
     rot_type = 0
+    # cmd_type : 'w/o command topic: 0', 'w/ command topic: 1''
+    cmd_type = 0
     
     #(trans)_(yaw)_mask
     pos_pos_mask = 0b100111111000
@@ -35,6 +38,7 @@ class flightControl:
     robot_name = ""
 
     start = False
+    next = False
     vel = 2.0
     yaw_rate = 0.1570796
     arrival_dist = 0.05
@@ -51,7 +55,7 @@ class flightControl:
     state = State()
     ext_state = ExtendedState()
 
-    def __init__(self, _robot_name, _start_pose, _vel, _arrival_dist, _arrival_yaw, _path, _ctrl_type = 1, _rot_type = 0, _r_los = 1.0, _yaw_rate = 0.1570796):#
+    def __init__(self, _robot_name, _start_pose, _vel, _arrival_dist, _arrival_yaw, _path, _ctrl_type = 1, _rot_type = 0, _cmd_type = 0, _r_los = 1.0, _yaw_rate = 0.1570796):#
         self.vel = _vel
         self.yaw_rate = _yaw_rate
         self.path = _path
@@ -64,6 +68,7 @@ class flightControl:
         self.r_los  = _r_los
         self.ctrl_type = _ctrl_type
         self.rot_type = _rot_type
+        self.cmd_type = _cmd_type
         self.sub_setup()
 
     def path_follow(self):
@@ -74,6 +79,7 @@ class flightControl:
         ext_state_sub      = rospy.Subscriber("mavros/extended_state", ExtendedState, self.ext_state_callback)
         local_position_sub = rospy.Subscriber("mavros/local_position/pose", PoseStamped, self.local_position_callback)
         start_sub = rospy.Subscriber("/start", Empty, self.start_callback)
+        next_sub = rospy.Subscriber("/next", Empty, self.next_callback)
 
     def state_callback(self, data):  
         self.state = data
@@ -94,18 +100,25 @@ class flightControl:
         elif self.ctrl_type == 1:
             threshold = self.r_los
         if diff < threshold and abs(yaw_diff) < self.arrival_yaw:
+            rospy.loginfo_once("{2} arrived at waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
             if self.target_idx < len(self.path)-1:
-                self.target_idx = self.target_idx + 1
-                if self.rot_type == 0:
-                    self.mode = 1
-                elif self.rot_type == 1:
-                    self.mode = 3
-                rospy.loginfo("Going to waypoint {0}/{1}".format(self.target_idx,len(self.path)))
+                if self.cmd_type == 0 or (self.cmd_type == 1 and self.next):
+                    self.target_idx = self.target_idx + 1
+                    if self.rot_type == 0:
+                        self.mode = 1
+                    elif self.rot_type == 1:
+                        self.mode = 3
+                    rospy.loginfo_once("{2} going to waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
+                    self.next = False
+                elif self.cmd_type is 1 and not self.next:
+                    rospy.loginfo_once("{0} waiting for next command".format(self.robot_name))
+                    self.mode = 0
+                self.past_target = self.target
+                self.target = self.path[self.target_idx]
             else:
                 self.mode = 0
                 rospy.loginfo_once("{0} Path end".format(self.robot_name))            
-            self.past_target = self.target
-            self.target = self.path[self.target_idx]
+            
             # rospy.loginfo("{0} past/target: {1}/{2}".format(self.robot_name, self.past_target,self.target))
         elif diff < threshold and abs(yaw_diff) > self.arrival_yaw:
             self.mode = 2
@@ -113,6 +126,17 @@ class flightControl:
 
     def start_callback(self, data):  
         self.start = True
+
+    def next_callback(self, data):
+        diff,_,_,_,yaw_diff = self.distance_to_target(self.pose, self.target)
+        if self.ctrl_type == 0:
+            threshold = self.arrival_dist
+        elif self.ctrl_type == 1:
+            threshold = self.r_los
+        if diff < threshold and abs(yaw_diff) < self.arrival_yaw:
+            self.next = True
+        else:
+            rospy.logerr_once("Wait! {0} not arrived yet. next: {1}".format(self.robot_name, self.next))
 
     def move(self, _target, _mode):
         control_msg = PositionTarget()
@@ -207,7 +231,7 @@ class flightControl:
             # yaw_rate_cmd = _yaw_rate
             yaw_rate_cmd = -_yaw_rate
 
-        rospy.logerr("diff_yaw: {0}, yaw_rate_cmd: {1} ".format(diff_yaw, yaw_rate_cmd))
+        # rospy.logerr("diff_yaw: {0}, yaw_rate_cmd: {1} ".format(diff_yaw, yaw_rate_cmd))
         
         return yaw_rate_cmd
 
