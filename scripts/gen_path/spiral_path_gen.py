@@ -2,13 +2,13 @@
 import numpy as np
 import csv
 
-round_trip = False
+CCW = False
 center_point = [0.0, 0.0]
-height = [1.0, 1.0]
+height = [1.0, 3.0]
 radius = 1.0
 start_step = 0.0
 resolution = 200
-iteration = 2
+iteration = 1
 
 p = 'path/outdoor/path1/'
 f = open(p + 'plot_uav1.csv', 'w', newline='')
@@ -19,6 +19,8 @@ print("control\t0")
 print("yaw_angle\t1")
 print("cmd_type\t0")
 print("pose_x	pose_y	pose_z	heading")
+z = height[0]
+delta_z = ((height[1]-height[0])) / float(resolution * iteration)
 for j in range(iteration):
     for i in range(resolution):
         angle = 2*np.pi/float(resolution)*(i+start_step)
@@ -26,17 +28,27 @@ for j in range(iteration):
             angle -= 2*np.pi
         while angle < -np.pi:
             angle += 2*np.pi
-        x = center_point[0] - radius*float(np.sin(angle))
-        y = center_point[1] - radius*float(np.cos(angle))
-        if round_trip:
-            z = (height[1]-height[0])/float(resolution)*(float(resolution)-abs(float(resolution)-i*2.0))+height[0]
+        if CCW:
+            x = center_point[0] - radius*float(np.sin(angle))
+            y = center_point[1] - radius*float(np.cos(angle))
         else:
-            z = (height[1]-height[0])/float(resolution)*i+height[0]
-        Y = np.pi -float(angle-np.pi/2.)
-        # tangent vector forward : np.pi - float(angle)
-        # tangent vector backward : -angle
-        # normal vector inside view : -float(angle-np.pi/2.)
-        # normal vector outside view : np.pi -float(angle-np.pi/2.)
+            x = center_point[0] + radius*float(np.sin(angle))
+            y = center_point[1] - radius*float(np.cos(angle))
+        z += delta_z
+        if CCW: Y = np.pi -float(angle-np.pi/2.)
+        else:   Y = -np.pi + float(angle)
+        # tangent vector forward
+        #   CCW: np.pi - float(angle) 
+        #   CW: angle
+        # tangent vector backward
+        #   CCW: -angle 
+        #   CW: -np.pi + float(angle)
+        # normal vector inside view
+        #   CCW: -float(angle-np.pi/2.) 
+        #   CW: float(angle+np.pi/2.)
+        # normal vector outside view
+        #   CCW: np.pi -float(angle-np.pi/2.) 
+        #   CW: -np.pi +float(angle+np.pi/2.)
         while Y > np.pi:
             Y -= 2*np.pi
         while Y < -np.pi:
