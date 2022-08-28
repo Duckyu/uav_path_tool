@@ -10,6 +10,7 @@ height = [1.0, 1.0]
 distance = 1.0
 resolution = 200
 turn_ratio = 0.2
+iteration = 2
 
 p = 'path/outdoor/path1/'
 f = open(p + 'plot_uav1.csv', 'w', newline='')
@@ -28,7 +29,7 @@ x = start_point[0]
 y = start_point[1]
 z = height[0]
 Y = 0
-for j in range(2):
+for j in range(iteration):
     for i in range(resolution):
         if i % quater_res >= quater_res * (1 - turn_ratio):
             Y += (np.pi/2) / (quater_res * turn_ratio)
