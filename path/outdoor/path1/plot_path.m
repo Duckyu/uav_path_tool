@@ -53,31 +53,31 @@ for i = 2:height(uav1)
             if flag(1)
                 plot3(uav1.x, uav1.y, uav1.z, '-b');hold on;
                 quiver3(uav1.x, uav1.y, uav1.z, ...
-                    cos(uav1.yaw), sin(uav1.yaw), 0*uav1.yaw, 0.3, 'r', LineWidth=1.0);hold off;
+                    cos(uav1.yaw), sin(uav1.yaw), 0*uav1.yaw, 0.5, 'r', LineWidth=1.0);hold off;
             end
             %%%% uav 2
             if flag(2)
                 plot3(uav2.x, uav2.y, uav2.z, '-b');hold on;
                 quiver3(uav2.x, uav2.y, uav2.z, ...
-                    cos(uav2.yaw), sin(uav2.yaw), 0*uav2.yaw, 0.3, 'r', LineWidth=1.0);hold off;
+                    cos(uav2.yaw), sin(uav2.yaw), 0*uav2.yaw, 0.5, 'r', LineWidth=1.0);hold off;
             end
             %%%% uav 3
             if flag(3)
                 plot3(uav3.x, uav3.y, uav3.z, '-b');hold on;
                 quiver3(uav3.x, uav3.y, uav3.z, ...
-                    cos(uav3.yaw), sin(uav3.yaw), 0*uav3.yaw, 0.3, 'r', LineWidth=1.0);hold off;
+                    cos(uav3.yaw), sin(uav3.yaw), 0*uav3.yaw, 0.5, 'r', LineWidth=1.0);hold off;
             end
             %%%% uav 4
             if flag(4)
                 plot3(uav4.x, uav4.y, uav4.z, '-b');hold on;
                 quiver3(uav4.x, uav4.y, uav4.z, ...
-                    cos(uav4.yaw), sin(uav4.yaw), 0*uav4.yaw, 0.3, 'r', LineWidth=1.0);hold off;
+                    cos(uav4.yaw), sin(uav4.yaw), 0*uav4.yaw, 0.5, 'r', LineWidth=1.0);hold off;
             end
             %%%% uav 5
             if flag(5)
                 plot3(uav5.x, uav5.y, uav5.z, '-b');hold on;
                 quiver3(uav5.x, uav5.y, uav5.z, ...
-                    cos(uav5.yaw), sin(uav5.yaw), 0*uav5.yaw, 0.3, 'r', LineWidth=1.0);hold off;
+                    cos(uav5.yaw), sin(uav5.yaw), 0*uav5.yaw, 0.5, 'r', LineWidth=1.0);hold off;
             end
         end
         grid on;
