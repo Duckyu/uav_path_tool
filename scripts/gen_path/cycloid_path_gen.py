@@ -9,7 +9,7 @@ radius = 1.0
 start_step = 0.0
 resolution = 200
 
-p = 'path/outdoor/path1/'
+p = '../../path/outdoor/path1/'
 f = open(p + 'plot_uav1.csv', 'w', newline='')
 wr = csv.writer(f)
 wr.writerow(['x', 'y', 'z', 'yaw'])
