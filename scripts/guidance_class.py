@@ -37,6 +37,7 @@ class flightControl:
 
     robot_name = ""
 
+    takeoff_flag = False
     start = False
     next = False
     vel = 2.0
@@ -78,6 +79,7 @@ class flightControl:
         state_sub          = rospy.Subscriber("mavros/state", State, self.state_callback)
         ext_state_sub      = rospy.Subscriber("mavros/extended_state", ExtendedState, self.ext_state_callback)
         local_position_sub = rospy.Subscriber("mavros/local_position/pose", PoseStamped, self.local_position_callback)
+        takeoff_sub = rospy.Subscriber("/takeoff", Empty, self.takeoff_callback)
         start_sub = rospy.Subscriber("/start", Empty, self.start_callback)
         next_sub = rospy.Subscriber("/next", Empty, self.next_callback)
 
@@ -110,20 +112,21 @@ class flightControl:
             threshold = self.arrival_dist
         
         if diff < threshold and abs(yaw_diff) < self.arrival_yaw:
-            # rospy.loginfo("{2} arrived at waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
+            if self.target_idx == 0:
+                while(not self.start):
+                    rospy.loginfo_once("Waiting start topic")
+                rospy.loginfo("Start mission")
             if self.target_idx < len(self.path)-1:
                 if self.cmd_type == 0 or (self.cmd_type == 1 and self.next):
                     self.target_idx = self.target_idx + 1
                     if self.rot_type == 0:
                         if self.ctrl_type == 2:
                             self.mode = 0
-                            print("DUCK1")
                         else:
                             self.mode = 1
                     elif self.rot_type == 1:
                         if self.ctrl_type == 2:
                             self.mode = 2
-                            print("DUCK2")
                         else:
                             self.mode = 3
                     rospy.loginfo("{2} going to waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
@@ -141,6 +144,9 @@ class flightControl:
         elif diff < threshold and abs(yaw_diff) > self.arrival_yaw:
             self.mode = 2
             rospy.loginfo("Yaw aligning")
+
+    def takeoff_callback(self, data):  
+        self.takeoff_flag = True
 
     def start_callback(self, data):  
         self.start = True
@@ -290,8 +296,9 @@ class flightControl:
         return (dist, grad_x, grad_y, grad_z, yaw_diff)
 
     def takeoff(self):
-        while(not self.start):
-            rospy.loginfo_once("Waiting start topic")
+        print(self.takeoff_flag)
+        while(not self.takeoff_flag):
+            rospy.loginfo_once("Waiting takeoff topic")
         rospy.loginfo("Attempting takeoff")
         while self.state.armed == False or self.pose[2] < 0.15:
             try:
