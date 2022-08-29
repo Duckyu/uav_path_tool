@@ -1,5 +1,5 @@
-control	0
-yaw_angle	1
+control	2
+yaw_angle	0
 cmd_type	0
 pose_x	pose_y	pose_z	heading
 1.024429	3.818034	0.000000	0.628319

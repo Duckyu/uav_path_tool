@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-from time import sleep
 import rospy
 import numpy as np
 from scipy.spatial.transform import Rotation as Rot
 from scipy.spatial import distance
 
 from mavros_msgs.srv import CommandBool, SetMode
-from std_msgs.msg import Empty
+from std_msgs.msg import Empty, String
 from nav_msgs.msg import Path, Odometry
 from mavros_msgs.msg import PositionTarget, State, ExtendedState
 from geometry_msgs.msg import PoseStamped, TransformStamped
@@ -19,10 +18,11 @@ class flightControl:
     #publisher
     control_pub = rospy.Publisher("mavros/setpoint_raw/local", PositionTarget, queue_size=10)
     local_odom_pub = rospy.Publisher("odom", Odometry, queue_size=10)
+    log_pub = rospy.Publisher("log", String, queue_size=10)
     
     # mode : 'hover: 0', 'move: 1', 'pure rotation: 2', 'velocity velocity: 3'
     mode = 0
-    # ctrl_type : 'vel pursuit: 0', 'LoS: 1'
+    # ctrl_type : 'vel pursuit: 0', 'LoS: 1', 'position: 2'
     ctrl_type = 0
     # ctrl_type : 'yaw target: 0', 'yaw vel: 1''
     rot_type = 0
@@ -94,49 +94,67 @@ class flightControl:
         self.pose = trans + [yaw]
 
         diff,_,_,_,yaw_diff = self.distance_to_target(self.pose, self.target)
+        self.log_pub.publish(
+            '''----------------
+            next:     {0}
+            control:  {1:01d}
+            mode:     {2:01d}
+            diff:     {3:0.4f}
+            yaw diff: {4:0.4f}
+            target:   {5:03d}
+            ----------------'''.format(self.next,int(self.ctrl_type),int(self.mode),diff,yaw_diff,int(self.target_idx)))
         
-        if self.ctrl_type == 0:
+        if self.ctrl_type == 1:
+            threshold = self.r_los+0.1
+        else:
             threshold = self.arrival_dist
-        elif self.ctrl_type == 1:
-            threshold = self.r_los
+        
         if diff < threshold and abs(yaw_diff) < self.arrival_yaw:
-            rospy.loginfo_once("{2} arrived at waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
+            # rospy.loginfo("{2} arrived at waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
             if self.target_idx < len(self.path)-1:
                 if self.cmd_type == 0 or (self.cmd_type == 1 and self.next):
                     self.target_idx = self.target_idx + 1
                     if self.rot_type == 0:
-                        self.mode = 1
+                        if self.ctrl_type == 2:
+                            self.mode = 0
+                            print("DUCK1")
+                        else:
+                            self.mode = 1
                     elif self.rot_type == 1:
-                        self.mode = 3
-                    rospy.loginfo_once("{2} going to waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
+                        if self.ctrl_type == 2:
+                            self.mode = 2
+                            print("DUCK2")
+                        else:
+                            self.mode = 3
+                    rospy.loginfo("{2} going to waypoint {0}/{1}".format(self.target_idx,len(self.path),self.robot_name))
                     self.next = False
-                elif self.cmd_type is 1 and not self.next:
-                    rospy.loginfo_once("{0} waiting for next command".format(self.robot_name))
+                elif self.cmd_type == 1 and not self.next:
+                    rospy.loginfo("{0} waiting for next command".format(self.robot_name))
                     self.mode = 0
                 self.past_target = self.target
                 self.target = self.path[self.target_idx]
             else:
                 self.mode = 0
-                rospy.loginfo_once("{0} Path end".format(self.robot_name))            
+                rospy.loginfo_once("{0} Path end".format(self.robot_name))
             
             # rospy.loginfo("{0} past/target: {1}/{2}".format(self.robot_name, self.past_target,self.target))
         elif diff < threshold and abs(yaw_diff) > self.arrival_yaw:
             self.mode = 2
-            rospy.loginfo_once("Yaw aligning")
+            rospy.loginfo("Yaw aligning")
 
     def start_callback(self, data):  
         self.start = True
 
     def next_callback(self, data):
         diff,_,_,_,yaw_diff = self.distance_to_target(self.pose, self.target)
-        if self.ctrl_type == 0:
-            threshold = self.arrival_dist
-        elif self.ctrl_type == 1:
+        if self.ctrl_type == 1:
             threshold = self.r_los
+        else:
+            threshold = self.arrival_dist
         if diff < threshold and abs(yaw_diff) < self.arrival_yaw:
             self.next = True
         else:
-            rospy.logerr_once("Wait! {0} not arrived yet. next: {1}".format(self.robot_name, self.next))
+            rospy.logerr("Wait! {0} not arrived yet. next: {1}".format(self.robot_name, self.next))
 
     def move(self, _target, _mode):
         control_msg = PositionTarget()
@@ -154,10 +172,16 @@ class flightControl:
                 vel_cmd = self.pursuit_vel(self.pose, _target)
             elif self.ctrl_type == 1:
                 vel_cmd = self.los_vel(self.pose, self.past_target, _target, self.r_los)
-            control_msg.velocity.x = vel_cmd[0]
-            control_msg.velocity.y = vel_cmd[1]
-            control_msg.velocity.z = vel_cmd[2]
-            control_msg.yaw = _target[3]
+            elif self.ctrl_type == 2:
+                rospy.logerr("Wrong control type")
+                self.mode = 0
+            try:
+                control_msg.velocity.x = vel_cmd[0]
+                control_msg.velocity.y = vel_cmd[1]
+                control_msg.velocity.z = vel_cmd[2]
+                control_msg.yaw = _target[3]
+            except:
+                rospy.logerr("Wait")
         elif _mode == 2:
             control_msg.type_mask = self.pos_vel_mask
             control_msg.position.x = _target[0]
@@ -170,10 +194,16 @@ class flightControl:
                 vel_cmd = self.pursuit_vel(self.pose, _target)
             elif self.ctrl_type == 1:
                 vel_cmd = self.los_vel(self.pose, self.past_target, _target, self.r_los)
-            control_msg.velocity.x = vel_cmd[0]
-            control_msg.velocity.y = vel_cmd[1]
-            control_msg.velocity.z = vel_cmd[2]
-            control_msg.yaw_rate = self.trap_yaw(self.yaw_rate)
+            elif self.ctrl_type == 2:
+                rospy.logerr("Wrong control type")
+                self.mode = 2
+            try:
+                control_msg.velocity.x = vel_cmd[0]
+                control_msg.velocity.y = vel_cmd[1]
+                control_msg.velocity.z = vel_cmd[2]
+                control_msg.yaw_rate = self.trap_yaw(self.yaw_rate)
+            except:
+                rospy.logerr("Wait")                
         else:
             rospy.logerr("Mode set wrong")
             control_msg.type_mask = self.pos_pos_mask
@@ -190,10 +220,13 @@ class flightControl:
         return velocity_command
     
     def los_vel(self, _pose, _past_target, _target, _r_los = 1.0):
-        (_, vec_x, vec_y, vec_z, _) = self.distance_to_target(_past_target, _target)
+        (temp_dist, vec_x, vec_y, vec_z, _) = self.distance_to_target(_past_target, _target)
+        # (_, vec_x, vec_y, vec_z, _) = self.distance_to_target(_past_target, _target)
         (pp_d, pp_x, pp_y, pp_z, _) = self.distance_to_target(_past_target, _pose)
         perp_d = pp_d * np.sin(np.arccos(np.dot(np.array([vec_x, vec_y, vec_z]), np.array([pp_x, pp_y, pp_z]))))
         local_dist = (float(pp_d)**2 - float(perp_d)**2)**0.5
+        rospy.loginfo("residual distance: {0}".format(temp_dist - pp_d))
+        
         perp = [[_past_target[0], _past_target[1], _past_target[2]][i] + [vec_x*local_dist, vec_y*local_dist, vec_z*local_dist][i] for i in range(3)]
         if perp_d < _r_los:
             local_los_dist = (_r_los**2 - float(perp_d)**2)**0.5
@@ -203,6 +236,7 @@ class flightControl:
         local_target.append(self.target[3])
         (_, local_x, local_y, local_z, _) = self.distance_to_target(_pose, local_target)
         
+        rospy.loginfo("local_target: {0} {1} {2}".format(local_target[0],local_target[1],local_target[2]))
         # rospy.logerr_once(local_target)
         velocity_command = [self.vel*local_x, self.vel*local_y, self.vel*local_z] # , self.yaw_rate
         return velocity_command
@@ -217,11 +251,17 @@ class flightControl:
             # yaw_rate_cmd = -_yaw_rate*(diff_yaw/_yaw_rate)/2
             yaw_rate_cmd = _yaw_rate*(diff_yaw/_yaw_rate)/2
         elif diff_yaw > 0:
-            self.mode = 1
+            if self.ctrl_type ==  2:
+                self.mode = 2
+            else:
+                self.mode = 1
             # yaw_rate_cmd = -_yaw_rate/2
             yaw_rate_cmd = _yaw_rate/2
         elif diff_yaw > -_yaw_rate:
-            self.mode = 1
+            if self.ctrl_type ==  2:
+                self.mode = 2
+            else:
+                self.mode = 1
             # yaw_rate_cmd = _yaw_rate/2
             yaw_rate_cmd = -_yaw_rate/2
         elif diff_yaw > -_yaw_rate*2:
