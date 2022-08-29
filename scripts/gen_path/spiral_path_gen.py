@@ -2,13 +2,13 @@
 import numpy as np
 import csv
 
-CCW = False
+CW = True
 center_point = [0.0, 0.0]
-height = [1.0, 3.0]
-radius = 1.0
+height = [3.0, 3.0]
+radius = 2.0
 start_step = 0.0
 resolution = 200
-iteration = 1
+iteration = 3
 
 p = 'path/outdoor/path1/'
 f = open(p + 'plot_uav1.csv', 'w', newline='')
@@ -28,27 +28,27 @@ for j in range(iteration):
             angle -= 2*np.pi
         while angle < -np.pi:
             angle += 2*np.pi
-        if CCW:
+        if CW:
             x = center_point[0] - radius*float(np.sin(angle))
             y = center_point[1] - radius*float(np.cos(angle))
         else:
             x = center_point[0] + radius*float(np.sin(angle))
             y = center_point[1] - radius*float(np.cos(angle))
         z += delta_z
-        if CCW: Y = np.pi -float(angle-np.pi/2.)
-        else:   Y = -np.pi + float(angle)
+        if CW: Y = np.pi - float(angle) 
+        else:   Y = angle
         # tangent vector forward
-        #   CCW: np.pi - float(angle) 
-        #   CW: angle
+        #   CW: np.pi - float(angle) 
+        #  CCW: angle
         # tangent vector backward
-        #   CCW: -angle 
-        #   CW: -np.pi + float(angle)
+        #   CW: -angle 
+        #  CCW: -np.pi + float(angle)
         # normal vector inside view
-        #   CCW: -float(angle-np.pi/2.) 
-        #   CW: float(angle+np.pi/2.)
+        #   CW: -float(angle-np.pi/2.) 
+        #  CCW: float(angle+np.pi/2.)
         # normal vector outside view
-        #   CCW: np.pi -float(angle-np.pi/2.) 
-        #   CW: -np.pi +float(angle+np.pi/2.)
+        #   CW: np.pi -float(angle-np.pi/2.) 
+        #  CCW: -np.pi +float(angle+np.pi/2.)
         while Y > np.pi:
             Y -= 2*np.pi
         while Y < -np.pi:

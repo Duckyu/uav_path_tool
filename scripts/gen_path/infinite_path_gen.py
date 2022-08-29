@@ -3,12 +3,12 @@ import numpy as np
 import csv
 
 center_point = [0.0, 0.0]
-height = [1.0, 4.0]
-alpha = 1.0
+height = [3.0, 3.0]
+alpha = 2.0
 resolution = 200
-iteration = 4
+iteration = 3
 
-p = 'path/outdoor/path1/'
+p = 'path/outdoor/path15/'
 f = open(p + 'plot_uav1.csv', 'w', newline='')
 wr = csv.writer(f)
 wr.writerow(['x', 'y', 'z', 'yaw'])
@@ -30,7 +30,7 @@ for j in range(iteration):
         x = center_point[0] + alpha * np.sqrt(2) * np.cos(angle) / (np.power(np.sin(angle),2) + 1)
         y = center_point[1] + alpha * np.sqrt(2) * np.cos(angle) * np.sin(angle) / (np.power(np.sin(angle),2) + 1)
         z += delta_z
-        Y = np.pi
+        Y = 0
         while Y > np.pi:
             Y -= 2*np.pi
         while Y < -np.pi:

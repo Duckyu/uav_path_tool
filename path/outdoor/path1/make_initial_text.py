@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-number_of_uav = 2
+number_of_uav = 1
 
 print("<!-- initial pose-->\n<setup>")
 for i in range(number_of_uav):

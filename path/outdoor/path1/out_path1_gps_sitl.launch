@@ -28,48 +28,17 @@
 		<arg name="fcu_url" default="udp://:14540@localhost:14580"/>
 		<!-- PX4 SITL and vehicle spawn -->
 		<include file="$(find path_generator)/launch/single_gazebo_uav_spawn.launch">
-			<arg name="x" value="2.200000"/>
-			<arg name="y" value="0.200000"/>
+			<arg name="x" value="0.000000"/>
+			<arg name="y" value="-2.000000"/>
 			<arg name="z" value="0.000000"/>
 			<arg name="R" value="0"/>
 			<arg name="P" value="0"/>
-			<arg name="Y" value="0.000000"/>
+			<arg name="Y" value="3.141593"/>
 			<arg name="vehicle" value="$(arg vehicle)"/>
 			<arg name="model_name" value="$(arg model_name)"/>
 			<arg name="sim_model" default="$(arg sim_model)"/>
 			<arg name="mavlink_udp_port" value="14560"/>
 			<arg name="mavlink_tcp_port" value="4560"/>
-			<arg name="ID" value="$(arg ID)"/>
-			<arg name="gst_udp_port" value="$(eval 5600 + arg('ID'))"/>
-			<arg name="video_uri" value="$(eval 5600 + arg('ID'))"/>
-			<arg name="mavlink_cam_udp_port" value="$(eval 14530 + arg('ID'))"/>
-		</include>
-		<!-- MAVROS -->
-		<include file="$(find mavros)/launch/px4.launch">
-			<arg name="fcu_url" value="$(arg fcu_url)"/>
-			<arg name="gcs_url" value=""/>
-			<arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
-			<arg name="tgt_component" value="1"/>
-		</include>
-	</group>
-	<!-- UAV2 -->
-	<group ns="UAV2">
-		<!-- MAVROS and vehicle configs -->
-		<arg name="ID" value="1"/>
-		<arg name="fcu_url" default="udp://:14541@localhost:14581"/>
-		<!-- PX4 SITL and vehicle spawn -->
-		<include file="$(find path_generator)/launch/single_gazebo_uav_spawn.launch">
-			<arg name="x" value="-2.200000"/>
-			<arg name="y" value="-4.200000"/>
-			<arg name="z" value="0.000000"/>
-			<arg name="R" value="0"/>
-			<arg name="P" value="0"/>
-			<arg name="Y" value="0.000000"/>
-			<arg name="vehicle" value="$(arg vehicle)"/>
-			<arg name="model_name" value="$(arg model_name)"/>
-			<arg name="sim_model" default="$(arg sim_model)"/>
-			<arg name="mavlink_udp_port" value="14561"/>
-			<arg name="mavlink_tcp_port" value="4561"/>
 			<arg name="ID" value="$(arg ID)"/>
 			<arg name="gst_udp_port" value="$(eval 5600 + arg('ID'))"/>
 			<arg name="video_uri" value="$(eval 5600 + arg('ID'))"/>

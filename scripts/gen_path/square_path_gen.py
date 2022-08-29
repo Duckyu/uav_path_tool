@@ -4,16 +4,18 @@ from tracemalloc import start
 import numpy as np
 import csv
 
-CCW = True
-start_point = [0.0, 0.0]
-height = [3.0, 2.0]
-distance = 1.0
+CCW = False
+start_point = [7.5, 2.5]
+height = [3.0, 3.0]
+distance = 5.0
 resolution = 200
 turn_ratio = 0.2
-iteration = 1
+iteration = 3
+offset_yaw = 1 * np.pi/2 # np.pi/2 means 1step back
+offset_xy = 1 * 1   # +1 means 1step back (CW), in CCW -1
 
-p = 'path/outdoor/path1/'
-f = open(p + 'plot_uav1.csv', 'w', newline='')
+p = 'path/outdoor/path13/'
+f = open(p + 'plot_uav5.csv', 'w', newline='')
 wr = csv.writer(f)
 wr.writerow(['x', 'y', 'z', 'yaw'])
 
@@ -29,29 +31,29 @@ delta_z = ((height[1]-height[0])) / \
 x = start_point[0]
 y = start_point[1]
 z = height[0]
-Y = 0 if CCW else np.pi/2
+Y = offset_yaw if CCW else np.pi/2 + offset_yaw
 for j in range(iteration):
     for i in range(resolution):
         if i % quater_res >= quater_res * (1 - turn_ratio):
             Y += (np.pi/2) / (quater_res * turn_ratio) if CCW else -(np.pi/2) / \
                     (quater_res * turn_ratio)
         else:
-            if i // quater_res == 0:
+            if i // quater_res == (0 + offset_xy)%4:
                 if CCW:
                     x += delta
                 else:
                     y += delta
-            elif i // quater_res == 1:
+            elif i // quater_res == (1 + offset_xy)%4:
                 if CCW:
                     y += delta
                 else:
                     x += delta
-            elif i // quater_res == 2:
+            elif i // quater_res == (2 + offset_xy)%4:
                 if CCW:
                     x -= delta
                 else:
                     y -= delta
-            else:
+            elif i // quater_res == (3 + offset_xy)%4:
                 if CCW:
                     y -= delta
                 else:
