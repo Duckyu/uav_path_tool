@@ -1,0 +1,27 @@
+<!-- initial pose-->
+<setup>
+	<robot>
+		<name>UAV1</name>
+		<pose>
+			<x>2.200000</x>
+			<y>0.200000</y>
+			<z>0.000000</z>
+			<R>0</R>
+			<P>0</P>
+			<Y>0.000000</Y>
+		</pose>
+	</robot>
+
+	<robot>
+		<name>UAV2</name>
+		<pose>
+			<x>-2.200000</x>
+			<y>-4.200000</y>
+			<z>0.000000</z>
+			<R>0</R>
+			<P>0</P>
+			<Y>0.000000</Y>
+		</pose>
+	</robot>
+
+</setup>

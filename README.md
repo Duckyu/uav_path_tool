@@ -22,7 +22,7 @@
   * After the file located in the proper directory, you need to make PX4 firmware again. Please refer to this [web](https://docs.px4.io/master/en/dev_airframes/adding_a_new_frame.html).
 
 ## Path text file rule([example file](path/indoor/path1/UAV.txt))
-* First Line: write down type of control (0: pure pursuit, 1: LoS)
+* First Line: write down type of control (0: pure pursuit, 1: LoS, 2: translation position)
   ```
   control	1
   ```
