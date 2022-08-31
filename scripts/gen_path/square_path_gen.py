@@ -65,6 +65,7 @@ def main():
     ################################################################
     CW =        [False, False, True, False, True]
     fix_turn = [True, True, False, False, True]
+    step_z = [False, False, True, False, True]
     distance =  [ 5.0,  5.0,  8.0,  5.0,  5.0]
     height = [
         [3.0, 15.0],
@@ -92,6 +93,8 @@ def main():
         delta = distance[l] / (step_res * (1 - turn_ratio))
         delta_z = ((height[l][1]-height[l][0])) / \
                 float((resolution - step_res * turn_ratio) * iter)
+        step_delta_z = ((height[l][1]-height[l][0])) / \
+                float(step_res * turn_ratio * iter)
         x = origin_x[l]
         y = origin_y[l]
         z = height[l][0]
@@ -104,6 +107,8 @@ def main():
                             2 * np.pi / step_res
                         Y = yaw_sat(Y)
                 if i % step_res >= step_res * (1 - turn_ratio):
+                    if step_z[l]:
+                        z += step_delta_z
                     if fix_turn[l]:
                         Y += -(np.pi/2) / (step_res * turn_ratio) if CW[l] else \
                             (np.pi/2) / (step_res * turn_ratio)
@@ -114,9 +119,9 @@ def main():
                 else:
                     x += delta * np.cos(heading_Y)
                     y += delta * np.sin(heading_Y)
-                    z += delta_z
+                    if not step_z[l]:
+                        z += delta_z
                     
-
                 if i==0 and j == 0:
                     out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}".format(\
                             origin_x[l],origin_y[l],0,Y))

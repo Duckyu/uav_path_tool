@@ -4,7 +4,7 @@ flag = [false, false, false, false, false];
 for i = 1:number
     flag(i) = true;
 end
-file_path = 'outdoor/path3/';
+file_path = 'outdoor/path2/';
 if flag(1)
     uav1 = readtable(strcat(file_path,'plot_uav1.csv')); end
 if flag(2)
