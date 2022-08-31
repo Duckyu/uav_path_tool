@@ -36,8 +36,11 @@ def main():
     meta_csv = open(main_path + 'meta_data.csv', 'r')
     rdr = csv.reader(meta_csv)
     uav_setup_l = []
+    isSpiral = [False, False, False, False, False]
     for line in rdr:
         if line[0] == path_num:
+            if line[1] == 'spiral':
+                isSpiral[int(line[2])-1] = True
             uav_setup_l.append(line[1:])
             # type, uav, x, y, yaw
     uav_size = len(uav_setup_l)
@@ -80,6 +83,9 @@ def main():
     # 'normal_outside'   : heaing = (CW+, CCW-)90 + meta yaw
 
     for l in range(uav_size):
+        if not isSpiral[l]:
+            print("UAV{} is not spiral path".format(l+1))
+            continue
         out_csv = open(main_path + 'path{}/'.format(path_num) + 
                     'plot_uav{}.csv'.format(l+1), 'w', newline='')
         out_txt = open(main_path + 'path{}/'.format(path_num) +

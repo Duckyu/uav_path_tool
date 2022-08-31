@@ -25,6 +25,12 @@ def main():
     wr.writerow([1, 'spiral', 3, 5.0, 0.0, 0.0])
     wr.writerow([1, 'spiral', 4, 5.0, 5.0, 0.0])
     wr.writerow([1, 'spiral', 5, 10.0, 0.0, 0.0])
+    ## path 2
+    wr.writerow([2, 'square', 1, 0.0, 0.0, 0.0])
+    wr.writerow([2, 'square', 2, 0.0, 5.0, 0.0])
+    wr.writerow([2, 'square', 3, 5.0, 0.0, 0.0])
+    wr.writerow([2, 'square', 4, 5.0, 5.0, 0.0])
+    wr.writerow([2, 'square', 5, 10.0, 0.0, 0.0])
     meta_csv.close()
 
 
