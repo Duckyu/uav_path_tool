@@ -41,29 +41,19 @@ def main():
         if line[0] == path_num:
             if line[1] == 'spiral':
                 isSpiral[int(line[2])-1] = True
-            uav_setup_l.append(line[1:])
-            # type, uav, x, y, yaw
+            uav_setup_l.append(line[1:]) # type, uav, x, y, yaw
     uav_size = len(uav_setup_l)
-
     if uav_size > 5:
         print("maximum 5 ERROR!!!!!")
         exit()
     print('==============')
     print('The number of uav is {}'.format(uav_size))
     print('==============')
-    ##################################3
-    resolution = args.resolution
-    iter = args.iter
+    ################################################################
+    ## you only need to edit this part variables ###################
+    ################################################################
     CW =        [False, False, True, False, True]
     radius =    [ 5.0,  5.0,  5.0,  5.0,  5.0]
-    center_x = []; center_y = []
-    origin_x = []; origin_y = []; origin_yaw = []
-    for i, uav in enumerate(uav_setup_l):
-        origin_yaw.append(yaw_sat(float(uav[4]) * np.pi / 180.0))
-        origin_x.append(float(uav[2]))
-        origin_y.append(float(uav[3]))
-        center_x.append(float(uav[2]))
-        center_y.append(float(uav[3]) + radius[i])
     height = [
         [3.0, 3.0],
         [3.0, 3.0],
@@ -81,6 +71,18 @@ def main():
     # 'tangent_backward' : heading = 180 + meta yaw
     # 'normal_inside'    : heading = (CW-, CCW+)90 + meta yaw
     # 'normal_outside'   : heaing = (CW+, CCW-)90 + meta yaw
+    ################################################################
+
+    resolution = args.resolution
+    iter = args.iter
+    center_x = []; center_y = []
+    origin_x = []; origin_y = []; origin_yaw = []
+    for i, uav in enumerate(uav_setup_l):
+        origin_yaw.append(yaw_sat(float(uav[4]) * np.pi / 180.0))
+        origin_x.append(float(uav[2]))
+        origin_y.append(float(uav[3]))
+        center_x.append(float(uav[2]))
+        center_y.append(float(uav[3]) + radius[i])
 
     for l in range(uav_size):
         if not isSpiral[l]:

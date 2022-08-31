@@ -43,35 +43,38 @@ def main():
         if line[0] == path_num:
             if line[1] == 'square':
                 isSquare[int(line[2])-1] = True
-            uav_setup_l.append(line[1:])
-            # type, uav, x, y, yaw
+            uav_setup_l.append(line[1:]) # type, uav, x, y, yaw
     uav_size = len(uav_setup_l)
-
     if uav_size > 5:
         print("maximum 5 ERROR!!!!!")
         exit()
     print('==============')
     print('The number of uav is {}'.format(uav_size))
     print('==============')
-    ##################################]
     resolution = args.resolution
     step_res = int(resolution/4)
     iter = args.iter
     turn_ratio = args.turn_ratio
-    CW =        [False, False, True, False, True]
-    distance =    [ 5.0,  5.0,  5.0,  5.0,  5.0]
     origin_x = []; origin_y = []; origin_yaw = []
     for i, uav in enumerate(uav_setup_l):
         origin_yaw.append(yaw_sat(float(uav[4]) * np.pi / 180.0))
         origin_x.append(float(uav[2]))
         origin_y.append(float(uav[3]))
+    ################################################################
+    ## you only need to edit this part variables ###################
+    ################################################################
+    CW =        [False, False, True, False, True]
+    fix_turn = [True, True, False, False, True]
+    distance =  [ 5.0,  5.0,  8.0,  5.0,  5.0]
     height = [
+        [3.0, 15.0],
         [3.0, 3.0],
-        [3.0, 3.0],
-        [3.0, 3.0],
+        [3.0, 6.0],
         [3.0, 3.0],
         [3.0, 3.0]]
-    ###########################################3
+    ###########################################
+    ### Don't edit below code #################
+    ###########################################
     for l in range(uav_size):
         if not isSquare[l]:
             print("UAV{} is not square path".format(l+1))
@@ -93,16 +96,26 @@ def main():
         y = origin_y[l]
         z = height[l][0]
         Y = origin_yaw[l]
+        heading_Y = origin_yaw[l]
         for j in range(iter):
             for i in range(resolution):
+                if not fix_turn[l]:
+                        Y += -2 * np.pi / step_res if CW[l] else \
+                            2 * np.pi / step_res
+                        Y = yaw_sat(Y)
                 if i % step_res >= step_res * (1 - turn_ratio):
-                    Y += -(np.pi/2) / (step_res * turn_ratio) if CW[l] else \
-                        (np.pi/2) / (step_res * turn_ratio)
-                    Y = yaw_sat(Y)
+                    if fix_turn[l]:
+                        Y += -(np.pi/2) / (step_res * turn_ratio) if CW[l] else \
+                            (np.pi/2) / (step_res * turn_ratio)
+                        Y = yaw_sat(Y)
+                    heading_Y += -(np.pi/2) / (step_res * turn_ratio) if CW[l] \
+                        else (np.pi/2) / (step_res * turn_ratio)
+                    heading_Y = yaw_sat(heading_Y)
                 else:
-                    x += delta * np.cos(Y)
-                    y += delta * np.sin(Y)
+                    x += delta * np.cos(heading_Y)
+                    y += delta * np.sin(heading_Y)
                     z += delta_z
+                    
 
                 if i==0 and j == 0:
                     out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}".format(\
