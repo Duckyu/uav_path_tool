@@ -31,6 +31,12 @@ def main():
     wr.writerow([2, 'square', 3, 5.0, 0.0, 0.0])
     wr.writerow([2, 'square', 4, 5.0, 5.0, 0.0])
     wr.writerow([2, 'square', 5, 10.0, 0.0, 0.0])
+    ## path 3
+    wr.writerow([3, 'infinite', 1, 0.0, 0.0, 0.0])
+    wr.writerow([3, 'infinite', 2, 0.0, 5.0, 0.0])
+    wr.writerow([3, 'infinite', 3, 5.0, 0.0, 0.0])
+    wr.writerow([3, 'infinite', 4, 5.0, 5.0, 0.0])
+    wr.writerow([3, 'infinite', 5, 10.0, 0.0, 0.0])
     meta_csv.close()
 
 
