@@ -1,66 +1,137 @@
 #!/usr/bin/env python
 import numpy as np
 import csv
+import argparse
 
-CW = True
-center_point = [0.0, 0.0]
-height = [3.0, 3.0]
-radius = 2.0
-start_step = 0.0
-resolution = 200
-iteration = 3
+def yaw_sat(input):
+    while input > np.pi:
+        input -= 2*np.pi
+    while input < -np.pi:
+        input += 2*np.pi
+    return input
 
-# 엑셀 파일을 csv로 열어서 UAV 개수와 UAV 시작 위치 및 시작 yaw를 받아옴.
+def rotate(x, y, base_x, base_y, angle):
+    xx = np.cos(angle) * (x - base_x) - np.sin(angle) * (y - base_y) + base_x
+    yy = np.sin(angle) * (x - base_x) + np.cos(angle) * (y - base_y) + base_y
+    return xx, yy
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Generate spiral path')
+    parser.add_argument('path_num', help='number of the path')
+    parser.add_argument('--main_path', 
+        type=str,
+        default='/home/dklee/uav_ws/src/uav_path_tool/path/outdoor/')
+    parser.add_argument('--resolution', default=200,
+        help='uav speed')
+    parser.add_argument('--iter', type=int, default=3,
+        help='iteration path')
+    args = parser.parse_args()
+    return args
+
+def main():
+    args = parse_args()
+    path_num = args.path_num
+    main_path = args.main_path
+    meta_csv = open(main_path + 'meta_data.csv', 'r')
+    rdr = csv.reader(meta_csv)
+    uav_setup_l = []
+    for line in rdr:
+        if line[0] == path_num:
+            uav_setup_l.append(line[1:])
+            # type, uav, x, y, yaw
+    uav_size = len(uav_setup_l)
+
+    if uav_size > 5:
+        print("maximum 5 ERROR!!!!!")
+        exit()
+    print('==============')
+    print('The number of uav is {}'.format(uav_size))
+    print('==============')
+    ##################################3
+    resolution = args.resolution
+    iter = args.iter
+    CW =        [False, False, True, False, True]
+    radius =    [ 5.0,  5.0,  5.0,  5.0,  5.0]
+    center_x = []; center_y = []
+    origin_x = []; origin_y = []; origin_yaw = []
+    for i, uav in enumerate(uav_setup_l):
+        origin_yaw.append(yaw_sat(float(uav[4]) * np.pi / 180.0))
+        origin_x.append(float(uav[2]))
+        origin_y.append(float(uav[3]))
+        center_x.append(float(uav[2]))
+        center_y.append(float(uav[3]) + radius[i])
+    height = [
+        [3.0, 3.0],
+        [3.0, 3.0],
+        [3.0, 3.0],
+        [3.0, 3.0],
+        [3.0, 3.0]]
+    heading = [
+        'tangent_forward',
+        'tangent_backward',
+        'normal_inside',
+        'normal_outside',
+        'none']
+    ###
+    # 'tangent_forward'  : heading = meta yaw
+    # 'tangent_backward' : heading = 180 + meta yaw
+    # 'normal_inside'    : heading = (CW-, CCW+)90 + meta yaw
+    # 'normal_outside'   : heaing = (CW+, CCW-)90 + meta yaw
+
+    for l in range(uav_size):
+        out_csv = open(main_path + 'path{}/'.format(path_num) + 
+                    'plot_uav{}.csv'.format(l+1), 'w', newline='')
+        out_txt = open(main_path + 'path{}/'.format(path_num) +
+                    'UAV{}.txt'.format(l+1), 'w')
+        wr = csv.writer(out_csv)
+        wr.writerow(['x', 'y', 'z', 'yaw'])
+        out_txt.write("control\t0\n")
+        out_txt.write("yaw_angle\t1\n")
+        out_txt.write("cmd_type\t0\n")
+        out_txt.write("pose_x	pose_y	pose_z	heading\n")
+        z = height[l][0]
+        delta_z = ((height[l][1]-height[l][0])) / float(resolution * iter)
+        for j in range(iter):
+            for i in range(resolution):
+                angle = yaw_sat(2*np.pi/float(resolution)*i)
+                if CW[l]:
+                    x_ = center_x[l] - radius[l]*float(np.sin(angle))
+                    y_ = center_y[l] - radius[l]*float(np.cos(angle))
+                    x, y = rotate(x_, y_, origin_x[l], origin_y[l], np.pi - origin_yaw[l])
+                    if heading[l] == 'tangent_forward':
+                        Y = yaw_sat(np.pi - origin_yaw[l] + np.pi - float(angle))
+                    elif heading[l] == 'tangent_backward':
+                        Y = yaw_sat(np.pi - origin_yaw[l] -angle )
+                    elif heading[l] == 'normal_inside':
+                        Y = yaw_sat(np.pi - origin_yaw[l] -float(angle-np.pi/2.))
+                    elif heading[l] == 'normal_outside':
+                        Y = yaw_sat(np.pi - origin_yaw[l] + np.pi -float(angle-np.pi/2.))
+                    else:
+                        Y = yaw_sat(np.pi - origin_yaw[l] + angle)
+                else:
+                    x_ = center_x[l] + radius[l]*float(np.sin(angle))
+                    y_ = center_y[l] - radius[l]*float(np.cos(angle))
+                    x, y = rotate(x_, y_, origin_x[l], origin_y[l], origin_yaw[l])
+                    if heading[l] == 'tangent_forward':
+                        Y = yaw_sat(origin_yaw[l] + angle)
+                    elif heading[l] == 'tangent_backward':
+                        Y = yaw_sat(origin_yaw[l] -np.pi + float(angle))
+                    elif heading[l] == 'normal_inside':
+                        Y = yaw_sat(origin_yaw[l] + float(angle+np.pi/2.))
+                    elif heading[l] == 'normal_outside':
+                        Y = yaw_sat(origin_yaw[l] -np.pi +float(angle+np.pi/2.))
+                    else:
+                        Y = yaw_sat(origin_yaw[l] -angle)
+                z += delta_z
+                if i==0 and j == 0:
+                    out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}\n".format(x,y,0,Y))
+                    wr.writerow([x, y, 0, Y])
+                out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}\n".format(x,y,z,Y))
+                wr.writerow([x, y, z, Y])
+        out_csv.close()
+        out_txt.close()
 
 
-path_path = 'path/outdoor/path1/'
-file_csv = open(path_path + 'plot_uav1.csv', 'w', newline='')
-file_txt = open(path_path + 'UAV1.txt', 'w')
-wr = csv.writer(file_csv)
-wr.writerow(['x', 'y', 'z', 'yaw'])
-
-file_txt.write("control\t0")
-file_txt.write("yaw_angle\t1")
-file_txt.write("cmd_type\t0")
-file_txt.write("pose_x	pose_y	pose_z	heading")
-z = height[0]
-delta_z = ((height[1]-height[0])) / float(resolution * iteration)
-for j in range(iteration):
-    for i in range(resolution):
-        angle = 2*np.pi/float(resolution)*(i+start_step)
-        while angle > np.pi:
-            angle -= 2*np.pi
-        while angle < -np.pi:
-            angle += 2*np.pi
-        if CW:
-            x = center_point[0] - radius*float(np.sin(angle))
-            y = center_point[1] - radius*float(np.cos(angle))
-        else:
-            x = center_point[0] + radius*float(np.sin(angle))
-            y = center_point[1] - radius*float(np.cos(angle))
-        z += delta_z
-        if CW: Y = np.pi - float(angle) 
-        else:   Y = angle
-        # tangent vector forward
-        #   CW: np.pi - float(angle) 
-        #  CCW: angle
-        # tangent vector backward
-        #   CW: -angle 
-        #  CCW: -np.pi + float(angle)
-        # normal vector inside view
-        #   CW: -float(angle-np.pi/2.) 
-        #  CCW: float(angle+np.pi/2.)
-        # normal vector outside view
-        #   CW: np.pi -float(angle-np.pi/2.) 
-        #  CCW: -np.pi +float(angle+np.pi/2.)
-        while Y > np.pi:
-            Y -= 2*np.pi
-        while Y < -np.pi:
-            Y += 2*np.pi
-        if i==0 and j == 0:
-            file_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}".format(x,y,0,Y))
-            wr.writerow([x, y, 0, Y])
-        file_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}".format(x,y,z,Y))
-        wr.writerow([x, y, z, Y])
-file_csv.close() 
-file_txt.close()    
+if __name__ == '__main__':
+    main()

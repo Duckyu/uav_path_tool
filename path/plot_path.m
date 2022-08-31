@@ -1,10 +1,10 @@
 clc; clear;
-number = 4;
+number = 5;
 flag = [false, false, false, false, false];
 for i = 1:number
     flag(i) = true;
 end
-file_path = 'outdoor/path14/';
+file_path = 'outdoor/path1/';
 if flag(1)
     uav1 = readtable(strcat(file_path,'plot_uav1.csv')); end
 if flag(2)
@@ -130,6 +130,7 @@ for i = 2:height(uav1)
         axis([x_m(1)-1.0 x_m(2)+1.0 ...
                 y_m(1)-1.0, y_m(2)+1.0, ...
                 0.0 z_m(2)+1.0]);
+        xlabel('X');ylabel('Y');zlabel('Z')
 %         pause(0.1)
         drawnow
 end
