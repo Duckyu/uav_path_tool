@@ -19,24 +19,77 @@ def main():
     wr = csv.writer(meta_csv)
     wr.writerow(['path', 'type', 'uav', 'x', 'y', 'yaw'])
     
+    # spiral, square, infinite, sin
     ## path 1
-    wr.writerow([1, 'spiral', 1, 0.0, 0.0, 0.0])
-    wr.writerow([1, 'spiral', 2, 0.0, 5.0, 0.0])
-    wr.writerow([1, 'spiral', 3, 5.0, 0.0, 0.0])
-    wr.writerow([1, 'spiral', 4, 5.0, 5.0, 0.0])
-    wr.writerow([1, 'spiral', 5, 10.0, 0.0, 0.0])
+    path = 1
+    wr.writerow([path, 'spiral', 1,    0.0,    0.0,    0])
+    wr.writerow([path, 'spiral', 2,    5.0,    0.0,    0])
+    wr.writerow([path, 'spiral', 3,    10.0,   0.0,    0])
+    wr.writerow([path, 'spiral', 4,    0.0,    5.0,    0])
+    wr.writerow([path, 'spiral', 5,    0.0,   10.0,    0])
     ## path 2
-    wr.writerow([2, 'square', 1, 0.0, 0.0, 0.0])
-    wr.writerow([2, 'square', 2, 0.0, 5.0, 0.0])
-    wr.writerow([2, 'square', 3, 5.0, 0.0, 0.0])
-    wr.writerow([2, 'square', 4, 5.0, 5.0, 0.0])
-    wr.writerow([2, 'square', 5, 10.0, 0.0, 0.0])
+    path = 2
+    wr.writerow([path, 'spiral', 1,    0.0,    0.0,    0])
+    wr.writerow([path, 'spiral', 2,    5.0,    0.0,    -45])
+    wr.writerow([path, 'spiral', 3,    10.0,   10.0,    90])
+    wr.writerow([path, 'spiral', 4,    0.0,    5.0,    -90])
+    wr.writerow([path, 'spiral', 5,    0.0,   10.0,    45])
     ## path 3
-    wr.writerow([3, 'infinite', 1, 0.0, 0.0, 0.0])
-    wr.writerow([3, 'infinite', 2, 0.0, 5.0, 0.0])
-    wr.writerow([3, 'infinite', 3, 5.0, 0.0, 0.0])
-    wr.writerow([3, 'infinite', 4, 5.0, 5.0, 0.0])
-    wr.writerow([3, 'infinite', 5, 10.0, 0.0, 0.0])
+    path = 3
+    wr.writerow([path, 'spiral', 1,    0.0,    0.0,    0])
+    wr.writerow([path, 'spiral', 2,    5.0,    0.0,    -45])
+    wr.writerow([path, 'spiral', 3,    10.0,   0.0,    90])
+    wr.writerow([path, 'spiral', 4,    0.0,    5.0,    -90])
+    wr.writerow([path, 'spiral', 5,    0.0,   10.0,    45])
+    # ##path 4
+    path = 4
+    wr.writerow([path, 'square', 1,    0.0,    0.0,    0])
+    wr.writerow([path, 'square', 2,    0.0,    5.0,    45])
+    wr.writerow([path, 'square', 3,    5.0,    0.0,    90])
+    wr.writerow([path, 'square', 4,    5.0,    5.0,    -45])
+    wr.writerow([path, 'square', 5,    10.0,   0.0,    -90])
+    # ## path 5
+    path = 5
+    wr.writerow([path, 'infinite', 1,    0.0,    0.0,    0.0])
+    wr.writerow([path, 'infinite', 2,    0.0,    18.0,    0.0])
+    wr.writerow([path, 'infinite', 3,    18.0,    0.0,    0.0])
+    wr.writerow([path, 'infinite', 4,    18.0,    18.0,    0.0])
+    wr.writerow([path, 'infinite', 5,    9.0,   9.0,    0.0])
+    # ## path 6
+    path = 6
+    wr.writerow([path, 'infinite', 1,    0.0,    0.0,    45])
+    wr.writerow([path, 'infinite', 2,    0.0,    15.0,    -45])
+    wr.writerow([path, 'infinite', 3,    15.0,    0.0,    -45])
+    wr.writerow([path, 'infinite', 4,    15.0,    15.0,    45])
+    wr.writerow([path, 'infinite', 5,    7.5,   7.5,    0.0])
+    # ## path 5
+    path = 7
+    wr.writerow([path, 'infinite', 1,    0.0,    0.0,    0.0])
+    wr.writerow([path, 'infinite', 2,    0.0,    18.0,    0.0])
+    wr.writerow([path, 'infinite', 3,    18.0,    0.0,    0.0])
+    wr.writerow([path, 'infinite', 4,    18.0,    18.0,    0.0])
+    wr.writerow([path, 'infinite', 5,    9.0,   9.0,    0.0])
+    # ## path 8
+    path = 8
+    wr.writerow([path, 'sin', 1,    0.0,    0.0,    0.0])
+    wr.writerow([path, 'sin', 2,    0.0,    10.0,    0.0])
+    wr.writerow([path, 'sin', 3,    10.0,    0.0,    0.0])
+    wr.writerow([path, 'sin', 4,    10.0,    10.0,    0.0])
+    wr.writerow([path, 'sin', 5,    -10.0,   0.0,    0.0])
+    # ## path 9
+    path = 9
+    wr.writerow([path, 'sin', 1,    4.0,    0.0,    0.0])
+    wr.writerow([path, 'sin', 2,    0.0,    4.0,    90])
+    wr.writerow([path, 'sin', 3,    -4.0,    0.0,    180])
+    wr.writerow([path, 'sin', 4,    0.0,    -4.0,    -90])
+    wr.writerow([path, 'spiral', 5,    0.0,   -1.5,    0.0])
+    # ## path 10
+    path = 10
+    wr.writerow([path, 'square', 1,    0.0,    0.0,    0.0])
+    wr.writerow([path, 'square', 2,    0.0,    10.0,    -90])
+    wr.writerow([path, 'square', 3,    10.0,    0.0,    90])
+    wr.writerow([path, 'square', 4,    10.0,    10.0,    180])
+    wr.writerow([path, 'square', 5,    13.0,   13.0,    -90])
     meta_csv.close()
 
 

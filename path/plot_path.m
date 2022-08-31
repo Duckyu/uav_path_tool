@@ -4,7 +4,7 @@ flag = [false, false, false, false, false];
 for i = 1:number
     flag(i) = true;
 end
-file_path = 'outdoor/path2/';
+file_path = 'outdoor/path10/';
 if flag(1)
     uav1 = readtable(strcat(file_path,'plot_uav1.csv')); end
 if flag(2)
@@ -19,49 +19,52 @@ if flag(5)
 for i = 2:height(uav1)
     figure(1)
         if i ~= height(uav1)
+            if mod(i,8) ~= 0
+                continue
+            end
             %%%% uav 1
             if flag(1)
-                plot3(uav1.x(2:i), uav1.y(2:i), uav1.z(2:i), '-b', LineWidth=3.0);hold on;
+                plot3(uav1.x(2:i), uav1.y(2:i), uav1.z(2:i), '-b', LineWidth=2.0);hold on;
                 quiver3(uav1.x(i), uav1.y(i), uav1.z(i), ...
                     cos(uav1.yaw(i)), sin(uav1.yaw(i)), 0, 0, 'r', LineWidth=1.5);
                 quiver3(uav1.x(i), uav1.y(i), uav1.z(i), ...
-                    0, 0, 1, 0.3, 'g', LineWidth=3.0);hold off;
+                    0, 0, 1, 0.3, 'g', LineWidth=2.0);hold off;
             end
             %%%% uav 2
             if flag(2)
                 hold on;
-                plot3(uav2.x(2:i), uav2.y(2:i), uav2.z(2:i), '-b', LineWidth=3.0);hold on;
+                plot3(uav2.x(2:i), uav2.y(2:i), uav2.z(2:i), '-b', LineWidth=2.0);hold on;
                 quiver3(uav2.x(i), uav2.y(i), uav2.z(i), ...
                     cos(uav2.yaw(i)), sin(uav2.yaw(i)), 0, 0, 'r', LineWidth=1.5);
                 quiver3(uav2.x(i), uav2.y(i), uav2.z(i), ...
-                    0, 0, 1, 0.3, 'g', LineWidth=3.0);hold off;
+                    0, 0, 1, 0.3, 'g', LineWidth=2.0);hold off;
             end
             %%%% uav 3
             if flag(3)
                 hold on;
-                plot3(uav3.x(2:i), uav3.y(2:i), uav3.z(2:i), '-b', LineWidth=3.0);hold on;
+                plot3(uav3.x(2:i), uav3.y(2:i), uav3.z(2:i), '-b', LineWidth=2.0);hold on;
                 quiver3(uav3.x(i), uav3.y(i), uav3.z(i), ...
                     cos(uav3.yaw(i)), sin(uav3.yaw(i)), 0, 0, 'r', LineWidth=1.5);
                 quiver3(uav3.x(i), uav3.y(i), uav3.z(i), ...
-                    0, 0, 1, 0.3, 'g', LineWidth=3.0);hold off;
+                    0, 0, 1, 0.3, 'g', LineWidth=2.0);hold off;
             end
             %%%% uav 4
             if flag(4)
                 hold on;
-                plot3(uav4.x(2:i), uav4.y(2:i), uav4.z(2:i), '-b', LineWidth=3.0);hold on;
+                plot3(uav4.x(2:i), uav4.y(2:i), uav4.z(2:i), '-b', LineWidth=2.0);hold on;
                 quiver3(uav4.x(i), uav4.y(i), uav4.z(i), ...
                     cos(uav4.yaw(i)), sin(uav4.yaw(i)), 0, 0, 'r', LineWidth=1.5);
                 quiver3(uav4.x(i), uav4.y(i), uav4.z(i), ...
-                    0, 0, 1, 0.3, 'g', LineWidth=3.0);hold off;
+                    0, 0, 1, 0.3, 'g', LineWidth=2.0);hold off;
             end
             %%%% uav 5
             if flag(5)
                 hold on;
-                plot3(uav5.x(2:i), uav5.y(2:i), uav5.z(2:i), '-b', LineWidth=3.0);hold on;
+                plot3(uav5.x(2:i), uav5.y(2:i), uav5.z(2:i), '-b', LineWidth=2.0);hold on;
                 quiver3(uav5.x(i), uav5.y(i), uav5.z(i), ...
                     cos(uav5.yaw(i)), sin(uav5.yaw(i)), 0, 0, 'r', LineWidth=1.5);
                 quiver3(uav5.x(i), uav5.y(i), uav5.z(i), ...
-                    0, 0, 1, 0.3, 'g', LineWidth=3.0);hold off;
+                    0, 0, 1, 0.3, 'g', LineWidth=2.0);hold off;
             end
         else
             %%%% uav 1

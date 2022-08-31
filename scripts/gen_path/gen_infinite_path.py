@@ -15,6 +15,12 @@ def rotate(x, y, base_x, base_y, angle):
     yy = np.sin(angle) * (x - base_x) + np.cos(angle) * (y - base_y) + base_y
     return xx, yy
 
+def get_distance(p1, p2):
+    # p1 = np.array((x1, y1, z1))
+    # p2 = np.array((x2, y2, z2))
+    dis = np.linalg.norm(p1 - p2)
+    return dis
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Generate infinite path')
@@ -26,6 +32,8 @@ def parse_args():
         help='uav speed')
     parser.add_argument('--iter', type=int, default=3,
         help='iteration path')
+    parser.add_argument('--collision_th', type=float, default=1.5,
+        help='collision check threshold')
     args = parser.parse_args()
     return args
 
@@ -33,6 +41,7 @@ def main():
     args = parse_args()
     path_num = args.path_num
     main_path = args.main_path
+    collision_th = args.collision_th
     meta_csv = open(main_path + 'meta_data.csv', 'r')
     rdr = csv.reader(meta_csv)
     uav_setup_l = []
@@ -60,18 +69,21 @@ def main():
     ## you only need to edit this part variables ###################
     ################################################################
     alpha =  [ 5.0,  5.0,  5.0,  5.0,  5.0] # + : CW, - : CCW
-    fix_turn = [True, True, False, False, True]
+    no_turn = [True, True, False, False, True]
     height = [
-        [3.0, 3.0],
-        [3.0, 3.0],
-        [3.0, 3.0],
-        [3.0, 3.0],
-        [3.0, 3.0]]
+        [3.0, 15.0],
+        [15.0, 3.0],
+        [15.0, 3.0],
+        [3.0, 15.0],
+        [3.0, 15.0]]
     ###########################################
     ### Don't edit below code #################
     ###########################################
     for l in range(uav_size):
-        if not isInfinite[l]:
+        if not any(isInfinite):
+            print("no available square path")
+            exit()
+        elif not isInfinite[l]:
             print("UAV{} is not infinite path".format(l+1))
             continue
         out_csv = open(main_path + 'path{}/'.format(path_num) + 
@@ -97,15 +109,86 @@ def main():
                     np.sin(angle) / (np.power(np.sin(angle),2) + 1)
                 x, y = rotate(x_, y_, origin_x[l], origin_y[l], origin_yaw[l])
                 z += delta_z
-                if not fix_turn[l]:
+                if not no_turn[l]:
                     Y += 4 * np.pi / resolution
                 if i==0 and j == 0:
-                    out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}".format(x,y,0,Y))
+                    out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}\n".format(x,y,0,Y))
                     wr.writerow([x, y, 0, Y])
-                out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}".format(x,y,z,Y))
+                out_txt.write("{0:.6f}\t{1:.6f}\t{2:.6f}\t{3:.6f}\n".format(x,y,z,Y))
                 wr.writerow([x, y, z, Y])
         out_csv.close()
         out_txt.close()
+
+    ## collision check
+    
+    out_1 = open(main_path + 'path{}/'.format(path_num) + 
+                'plot_uav{}.csv'.format(1), 'r')
+    out_2 = open(main_path + 'path{}/'.format(path_num) + 
+                'plot_uav{}.csv'.format(2), 'r')
+    out_3 = open(main_path + 'path{}/'.format(path_num) + 
+                'plot_uav{}.csv'.format(3), 'r')
+    out_4 = open(main_path + 'path{}/'.format(path_num) + 
+                'plot_uav{}.csv'.format(4), 'r')
+    out_5 = open(main_path + 'path{}/'.format(path_num) + 
+                'plot_uav{}.csv'.format(5), 'r')
+    rdr_1 = csv.reader(out_1)
+    rdr_2 = csv.reader(out_2)
+    rdr_3 = csv.reader(out_3)
+    rdr_4 = csv.reader(out_4)
+    rdr_5 = csv.reader(out_5)
+
+    cause = []
+    ground_th = 2.0
+    for j, (l1, l2, l3, l4, l5) in \
+            enumerate(zip(rdr_1, rdr_2, rdr_3, rdr_4, rdr_5)):
+        if l1[0] == 'x':
+            continue
+        cause = []
+        p1 = np.array((float(l1[0]), float(l1[1]), float(l1[2])))
+        p2 = np.array((float(l2[0]), float(l2[1]), float(l2[2])))
+        p3 = np.array((float(l3[0]), float(l3[1]), float(l3[2])))
+        p4 = np.array((float(l4[0]), float(l4[1]), float(l4[2])))
+        p5 = np.array((float(l5[0]), float(l5[1]), float(l5[2])))
+        p1_g = np.array((float(l1[0]), float(l1[1]), 0.0))
+        p2_g = np.array((float(l2[0]), float(l2[1]), 0.0))
+        p3_g = np.array((float(l3[0]), float(l3[1]), 0.0))
+        p4_g = np.array((float(l4[0]), float(l4[1]), 0.0))
+        p5_g = np.array((float(l5[0]), float(l5[1]), 0.0))
+        if j > 1:
+            if get_distance(p1, p1_g) < ground_th:
+                cause.append([0, 1])
+            if get_distance(p2, p2_g) < ground_th:
+                cause.append([0, 2])
+            if get_distance(p3, p3_g) < ground_th:
+                cause.append([0, 3])
+            if get_distance(p4, p4_g) < ground_th:
+                cause.append([0, 4])
+            if get_distance(p5, p5_g) < ground_th:
+                cause.append([0, 5])
+
+        if get_distance(p1, p2) < collision_th:
+            cause.append([1, 2])
+        if get_distance(p1, p3) < collision_th:
+            cause.append([1, 3])
+        if get_distance(p1, p4) < collision_th:
+            cause.append([1, 4])
+        if get_distance(p1, p5) < collision_th:
+            cause.append([1, 5])
+        if get_distance(p2, p3) < collision_th:
+            cause.append([2, 3])
+        if get_distance(p2, p4) < collision_th:
+            cause.append([2, 4])
+        if get_distance(p2, p5) < collision_th:
+            cause.append([2, 5])
+        if get_distance(p3, p4) < collision_th:
+            cause.append([3, 4])
+        if get_distance(p3, p5) < collision_th:
+            cause.append([3, 5])
+        if get_distance(p4, p5) < collision_th:
+            cause.append([4, 5])
+        if not len(cause) == 0:
+            for c in cause:
+                print("between path {}, {} / index {}".format(c[0], c[1], j))
 
 if __name__ == '__main__':
     main()
