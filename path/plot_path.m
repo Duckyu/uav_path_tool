@@ -15,11 +15,17 @@ if flag(4)
     uav4 = readtable(strcat(file_path,'plot_uav4.csv')); end
 if flag(5)
     uav5 = readtable(strcat(file_path,'plot_uav5.csv')); end
-
+output_path = strcat(file_path, 'result.gif');
+save_flag = 1;
+rot_deg = 360;
+rot_deg_step = 3;
+rot_range = 0 : rot_deg_step : rot_deg;
+rot_range_length = max(size(rot_range));
+direction = [0, 0, 1];
 for i = 2:height(uav1)
     figure(1)
         if i ~= height(uav1)
-            if mod(i,8) ~= 0
+            if mod(i,1) ~= 0
                 continue
             end
             %%%% uav 1
@@ -133,8 +139,27 @@ for i = 2:height(uav1)
         axis([x_m(1)-1.0 x_m(2)+1.0 ...
                 y_m(1)-1.0, y_m(2)+1.0, ...
                 0.0 z_m(2)+1.0]);
+        axis vis3d
         xlabel('X');ylabel('Y');zlabel('Z')
 %         pause(0.1)
         drawnow
+end
+
+for cnt_plot = rot_range
+    figure(1);
+    camorbit(rot_deg_step, 0, 'data', direction);
+    drawnow;
+    if save_flag
+        frame = getframe(1);
+        img = frame2im(frame);
+        [imind, cm] = rgb2ind(img, 128);
+        
+        if cnt_plot == 0
+            imwrite(imind, cm, output_path, 'gif', 'LoopCount', Inf, 'DelayTime', 0.1);
+        else
+            imwrite(imind, cm, output_path, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
+        end
+    end
+    pause(0.1)
 end
             
