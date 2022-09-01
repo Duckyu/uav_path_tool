@@ -15,13 +15,44 @@ if flag(4)
     uav4 = readtable(strcat(file_path,'plot_uav4.csv')); end
 if flag(5)
     uav5 = readtable(strcat(file_path,'plot_uav5.csv')); end
-output_path = strcat(file_path, 'result.gif');
+output_gif = strcat(file_path, 'result.gif');
+seq_gif = strcat(file_path, 'seq.gif');
+output_top = strcat(file_path, 'top_view.png');
 save_flag = 1;
 rot_deg = 360;
 rot_deg_step = 3;
 rot_range = 0 : rot_deg_step : rot_deg;
 rot_range_length = max(size(rot_range));
 direction = [0, 0, 1];
+
+if flag(5)
+    x_m = [min([min(uav1.x), min(uav2.x), min(uav3.x), min(uav4.x), min(uav5.x)]), ...
+        max([max(uav1.x), max(uav2.x), max(uav3.x), max(uav4.x), max(uav5.x)])];
+    y_m = [min([min(uav1.y), min(uav2.y), min(uav3.y), min(uav4.y), min(uav5.y)]), ...
+        max([max(uav1.y), max(uav2.y), max(uav3.y), max(uav4.y), max(uav5.y)])];
+    z_m = [0.0, max([max(uav1.z), max(uav2.z), max(uav3.z), max(uav4.z), max(uav5.z)])];
+elseif flag(4)
+    x_m = [min([min(uav1.x), min(uav2.x), min(uav3.x), min(uav4.x)]), ...
+        max([max(uav1.x), max(uav2.x), max(uav3.x), max(uav4.x)])];
+    y_m = [min([min(uav1.y), min(uav2.y), min(uav3.y), min(uav4.y)]), ...
+        max([max(uav1.y), max(uav2.y), max(uav3.y), max(uav4.y)])];
+    z_m = [0.0, max([max(uav1.z), max(uav2.z), max(uav3.z), max(uav4.z)])];
+elseif flag(3)
+    x_m = [min([min(uav1.x), min(uav2.x), min(uav3.x)]), ...
+        max([max(uav1.x), max(uav2.x), max(uav3.x)])];
+    y_m = [min([min(uav1.y), min(uav2.y), min(uav3.y)]), ...
+        max([max(uav1.y), max(uav2.y), max(uav3.y)])];
+    z_m = [0.0, max([max(uav1.z), max(uav2.z), max(uav3.z)])];
+elseif flag(2)
+    x_m = [min(min(uav1.x), min(uav2.x)), max(max(uav1.x), max(uav2.x))];
+    y_m = [min(min(uav1.y), min(uav2.y)), max(max(uav1.y), max(uav2.y))];
+    z_m = [0.0, max(max(uav1.z), max(uav2.z))];
+elseif flag(1)
+    x_m = [min(uav1.x), max(uav1.x)];
+    y_m = [min(uav1.y), max(uav1.y)];
+    z_m = [0.0, max(uav1.z)];
+end
+
 for i = 2:height(uav1)
     figure(1)
         if i ~= height(uav1)
@@ -109,33 +140,6 @@ for i = 2:height(uav1)
             end
         end
         grid on;
-        if flag(5)
-            x_m = [min([min(uav1.x), min(uav2.x), min(uav3.x), min(uav4.x), min(uav5.x)]), ...
-                max([max(uav1.x), max(uav2.x), max(uav3.x), max(uav4.x), max(uav5.x)])];
-            y_m = [min([min(uav1.y), min(uav2.y), min(uav3.y), min(uav4.y), min(uav5.y)]), ...
-                max([max(uav1.y), max(uav2.y), max(uav3.y), max(uav4.y), max(uav5.y)])];
-            z_m = [0.0, max([max(uav1.z), max(uav2.z), max(uav3.z), max(uav4.z), max(uav5.z)])];
-        elseif flag(4)
-            x_m = [min([min(uav1.x), min(uav2.x), min(uav3.x), min(uav4.x)]), ...
-                max([max(uav1.x), max(uav2.x), max(uav3.x), max(uav4.x)])];
-            y_m = [min([min(uav1.y), min(uav2.y), min(uav3.y), min(uav4.y)]), ...
-                max([max(uav1.y), max(uav2.y), max(uav3.y), max(uav4.y)])];
-            z_m = [0.0, max([max(uav1.z), max(uav2.z), max(uav3.z), max(uav4.z)])];
-        elseif flag(3)
-            x_m = [min([min(uav1.x), min(uav2.x), min(uav3.x)]), ...
-                max([max(uav1.x), max(uav2.x), max(uav3.x)])];
-            y_m = [min([min(uav1.y), min(uav2.y), min(uav3.y)]), ...
-                max([max(uav1.y), max(uav2.y), max(uav3.y)])];
-            z_m = [0.0, max([max(uav1.z), max(uav2.z), max(uav3.z)])];
-        elseif flag(2)
-            x_m = [min(min(uav1.x), min(uav2.x)), max(max(uav1.x), max(uav2.x))];
-            y_m = [min(min(uav1.y), min(uav2.y)), max(max(uav1.y), max(uav2.y))];
-            z_m = [0.0, max(max(uav1.z), max(uav2.z))];
-        elseif flag(1)
-            x_m = [min(uav1.x), max(uav1.x)];
-            y_m = [min(uav1.y), max(uav1.y)];
-            z_m = [0.0, max(uav1.z)];
-        end
         axis([x_m(1)-1.0 x_m(2)+1.0 ...
                 y_m(1)-1.0, y_m(2)+1.0, ...
                 0.0 z_m(2)+1.0]);
@@ -143,6 +147,17 @@ for i = 2:height(uav1)
         xlabel('X');ylabel('Y');zlabel('Z')
 %         pause(0.1)
         drawnow
+        if save_flag
+            frame = getframe(1);
+            img = frame2im(frame);
+            [imind, cm] = rgb2ind(img, 128);
+            
+            if i == 2
+                imwrite(imind, cm, seq_gif, 'gif', 'LoopCount', Inf, 'DelayTime', 0.1);
+            else
+                imwrite(imind, cm, seq_gif, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
+            end
+        end
 end
 
 for cnt_plot = rot_range
@@ -155,11 +170,18 @@ for cnt_plot = rot_range
         [imind, cm] = rgb2ind(img, 128);
         
         if cnt_plot == 0
-            imwrite(imind, cm, output_path, 'gif', 'LoopCount', Inf, 'DelayTime', 0.1);
+            imwrite(imind, cm, output_gif, 'gif', 'LoopCount', Inf, 'DelayTime', 0.1);
         else
-            imwrite(imind, cm, output_path, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
+            imwrite(imind, cm, output_gif, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
         end
     end
     pause(0.1)
+end
+if save_flag
+    figure(1);
+    axis([min(x_m(1), y_m(1))-1.0 max(x_m(2), y_m(2))+1.0 ...
+          min(x_m(1), y_m(1))-1.0 max(x_m(2), y_m(2))+1.0]);
+    view(0,90);
+    saveas(gcf, output_top);
 end
             

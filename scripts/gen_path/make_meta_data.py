@@ -27,6 +27,16 @@ def main():
     wr.writerow([path, 'spiral', 3,    10.0,   0.0,    0])
     wr.writerow([path, 'spiral', 4,    0.0,    5.0,    0])
     wr.writerow([path, 'spiral', 5,    0.0,   10.0,    0])
+    # CW =     [True, True, True, True, True]
+    # radius = [ 5.0,  5.0,  5.0,  5.0,  5.0]
+    # height = [[3.0, 10.0],
+    #           [10.0, 3.0],
+    #           [3.0, 10.0],
+    #           [10.0, 3.0],
+    #           [3.0, 10.0]]
+    # heading = ['none','none','none','none','none']
+    # --iter 3
+
     ## path 2
     path = 2
     wr.writerow([path, 'spiral', 1,    0.0,    0.0,    0])
@@ -34,13 +44,33 @@ def main():
     wr.writerow([path, 'spiral', 3,    10.0,   10.0,    90])
     wr.writerow([path, 'spiral', 4,    0.0,    5.0,    -90])
     wr.writerow([path, 'spiral', 5,    0.0,   10.0,    45])
+    # CW =     [True, True, True, True, True]
+    # radius = [ 5.0,  5.0,  5.0,  5.0,  5.0]
+    # height = [[3.0, 10.0],
+    #           [10.0, 3.0],
+    #           [3.0, 10.0],
+    #           [10.0, 3.0],
+    #           [3.0, 10.0]]
+    # heading = ['none','none','none','none','none']
+    # --iter 3
+
     ## path 3
     path = 3
     wr.writerow([path, 'spiral', 1,    0.0,    0.0,    0])
-    wr.writerow([path, 'spiral', 2,    5.0,    0.0,    -45])
-    wr.writerow([path, 'spiral', 3,    10.0,   0.0,    90])
-    wr.writerow([path, 'spiral', 4,    0.0,    5.0,    -90])
-    wr.writerow([path, 'spiral', 5,    0.0,   10.0,    45])
+    wr.writerow([path, 'spiral', 2,    0.0,    15.0,    180])
+    wr.writerow([path, 'spiral', 3,    15.0,   15.0,    0])
+    wr.writerow([path, 'spiral', 4,    15.0,    0.0,    180])
+    wr.writerow([path, 'spiral', 5,    7.5,   0.0,    0])
+    # CW =     [True, True, True, True, True]
+    # radius = [ 5.0,  5.0,  5.0,  5.0,  5.0]
+    # height = [[3.0, 10.0],
+    #           [10.0, 3.0],
+    #           [3.0, 10.0],
+    #           [10.0, 3.0],
+    #           [3.0, 10.0]]
+    # heading = ['none','none','none','none','none']
+    # --iter 3
+    
     # ##path 4
     path = 4
     wr.writerow([path, 'square', 1,    0.0,    0.0,    0])
@@ -83,6 +113,16 @@ def main():
     wr.writerow([path, 'sin', 3,    -4.0,    0.0,    180])
     wr.writerow([path, 'sin', 4,    0.0,    -4.0,    -90])
     wr.writerow([path, 'spiral', 5,    0.0,   -1.5,    0.0])
+    # amplitude =  [ 3.0,  3.0,  3.0,  3.0,  3.0] # + : CW, - : CCW
+    # period = [ 0.5,  0.5,  0.5,  0.5,  0.5]
+    # use_yz = [False, False, False, False, False]
+    # no_turn = [False, False, False, False, False]
+    # height = [
+    #     [3.0, 6.0],
+    #     [3.0, 6.0],
+    #     [3.0, 6.0],
+    #     [3.0, 6.0],
+    #     [3.0, 10.0]]
     # ## path 10
     path = 10
     wr.writerow([path, 'square', 1,    0.0,    0.0,    0.0])
@@ -90,6 +130,16 @@ def main():
     wr.writerow([path, 'square', 3,    10.0,    0.0,    90])
     wr.writerow([path, 'square', 4,    10.0,    10.0,    180])
     wr.writerow([path, 'square', 5,    13.0,   13.0,    -90])
+    # CW =        [False, False, False, False, True]
+    # fix_turn = [True, True, False, False, False]
+    # step_z = [True, True, True, True, True]
+    # distance =  [ 10.0,  10.0,  10.0,  10.0,  16.0]
+    # height = [
+    #     [3.0, 10.0],
+    #     [3.0, 10.0],
+    #     [3.0, 10.0],
+    #     [3.0, 10.0],
+    #     [10.0, 5.0]]
     meta_csv.close()
 
 
