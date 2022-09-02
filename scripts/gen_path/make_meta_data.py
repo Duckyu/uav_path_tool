@@ -140,6 +140,23 @@ def main():
     #     [3.0, 10.0],
     #     [3.0, 10.0],
     #     [10.0, 5.0]]
+
+    ## path 11
+    path = 11
+    wr.writerow([path, 'spiral', 1,    0.0,    0.0,    0])
+    wr.writerow([path, 'spiral', 2,    10.0,    0.0,    0])
+    wr.writerow([path, 'spiral', 3,    20.0,   0.0,    0])
+    wr.writerow([path, 'spiral', 4,    5.0,    8.0,    0])
+    wr.writerow([path, 'spiral', 5,    15.0,   8.0,    0])
+    # CW =     [True, True, True, True, True]
+    # radius = [ 4.0,  4.0,  4.0,  4.0,  4.0]
+    # height = [[3.0, 3.0],
+    #           [3.0, 3.0],
+    #           [3.0, 3.0],
+    #           [3.0, 3.0],
+    #           [3.0, 3.0]]
+    # heading = ['none','none','none','none','none']
+    # --iter 3
     meta_csv.close()
 
 

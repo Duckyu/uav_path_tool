@@ -5,7 +5,7 @@
     <arg name="arv_dist" default="0.1"/>
     <arg name="arv_yaw" default="0.2"/>
     <arg name="LoS_radius" default="0.1"/>
-    <arg name="file_dir" default="$(find path_generator)/path/outdoor/path3"/>
+    <arg name="file_dir" default="$(find path_generator)/path/outdoor/path1"/>
     
     <param name="sitl_flag" value="True"/>
     <param name="file_dir" value="$(arg file_dir)"/>

@@ -61,20 +61,14 @@ def main():
     ################################################################
     ## you only need to edit this part variables ###################
     ################################################################
-    CW =        [False, False, True, True, False]
-    radius =    [ 5.0,  5.0,  5.0,  5.0,  3.0]
-    height = [
-        [3.0, 10.0],
-        [3.0, 10.0],
-        [3.0, 10.0],
-        [3.0, 10.0],
-        [10.0, 3.0]]
-    heading = [
-        'none',
-        'none',
-        'none',
-        'none',
-        'none']
+    CW =     [True, True, True, True, True]
+    radius = [ 4.0,  4.0,  4.0,  4.0,  4.0]
+    height = [[3.0, 3.0],
+              [3.0, 3.0],
+              [3.0, 3.0],
+              [3.0, 3.0],
+              [3.0, 3.0]]
+    heading = ['none','none','none','none','none']
     ###
     # 'tangent_forward'  : heading = meta yaw
     # 'tangent_backward' : heading = 180 + meta yaw

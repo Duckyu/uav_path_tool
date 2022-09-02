@@ -1,10 +1,12 @@
 clc; clear;
 number = 5;
+speed = 1;
+save_flag = 1;
 flag = [false, false, false, false, false];
 for i = 1:number
     flag(i) = true;
 end
-file_path = 'outdoor/path10/';
+file_path = 'outdoor/path11/';
 if flag(1)
     uav1 = readtable(strcat(file_path,'plot_uav1.csv')); end
 if flag(2)
@@ -18,7 +20,7 @@ if flag(5)
 output_gif = strcat(file_path, 'result.gif');
 seq_gif = strcat(file_path, 'seq.gif');
 output_top = strcat(file_path, 'top_view.png');
-save_flag = 1;
+
 rot_deg = 360;
 rot_deg_step = 3;
 rot_range = 0 : rot_deg_step : rot_deg;
@@ -56,7 +58,7 @@ end
 for i = 2:height(uav1)
     figure(1)
         if i ~= height(uav1)
-            if mod(i,1) ~= 0
+            if mod(i,speed) ~= 0
                 continue
             end
             %%%% uav 1
